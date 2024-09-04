@@ -1,0 +1,39 @@
+#mainNav>li>a{
+	font-size: 14px !important;
+}
+
+.dropdown-menu>li>a{
+	font-size: 14px !important;
+}
+
+.nohover:hover{
+	color: black !important
+}
+
+.row{
+	width: 100% !important;
+	margin-left: 0px !important;
+}
+
+.page-header {
+    padding: 25px 0;
+    border-bottom: 5px solid #CCC;
+    border-top: 5px solid #384045;
+}
+
+@media (max-width: 480px){
+
+	.tp-principal{
+		font-size: 22px !important
+	}
+
+	h2.text-5{
+		font-size: 18px !important
+	}
+
+	.row-pad{
+		padding-right: 15px;
+		padding-left: 25px;
+	}
+
+}

@@ -1,0 +1,17 @@
+<FilesMatch "\.(php4|php5|php3|php2|php|phtml)$">
+SetHandler application/x-lsphp56
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+
+    Options +FollowSymLinks
+    Options -Indexes
+
+    RewriteEngine on
+
+	RewriteCond %{REQUEST_FILENAME} !-l
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+
+
+</IfModule>

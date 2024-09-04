@@ -1,0 +1,10 @@
+[23-Feb-2021 23:42:17 UTC] PHP Parse error:  syntax error, unexpected '[' in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/funciones.php on line 605
+[23-Feb-2021 23:43:55 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/funciones.php on line 6
+[23-Feb-2021 23:44:04 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/funciones.php on line 6
+[23-Feb-2021 23:44:04 UTC] PHP Warning:  mysql_result(): Unable to jump to row 0 on MySQL result index 8 in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/log.php on line 32
+[23-Feb-2021 23:44:04 UTC] PHP Deprecated:  mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/funciones.php on line 6
+[23-Feb-2021 23:44:04 UTC] PHP Notice:  Undefined index: idEmpresa in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/funciones.php on line 581
+[23-Feb-2021 23:44:04 UTC] PHP Warning:  mysql_num_rows() expects parameter 1 to be resource, boolean given in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/funciones.php on line 585
+[23-Feb-2021 23:44:04 UTC] PHP Warning:  mysql_result(): Unable to jump to row 0 on MySQL result index 8 in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/log.php on line 48
+[23-Feb-2021 23:44:04 UTC] PHP Warning:  mysql_result(): Unable to jump to row 0 on MySQL result index 8 in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/log.php on line 49
+[23-Feb-2021 23:44:04 UTC] PHP Warning:  mysql_result(): Unable to jump to row 0 on MySQL result index 8 in /home/u125366151/domains/yugiprices.com/public_html/mpsico/app/log.php on line 50

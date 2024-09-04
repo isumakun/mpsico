@@ -1,0 +1,1091 @@
+<!--<select class="form-control" required=""value="" name="ciudadR" id="ciudadR" placeholder="Ciudad">
+									
+									<option >ABEJORRAL </option>
+									<option >ABREGO </option>
+									<option >ABRIAQUI </option>
+									<option >ACACIAS </option>
+									<option >ACANDI </option>
+									<option >ACEVEDO </option>
+									<option >ACHI </option>
+									<option >AGRADO </option>
+									<option >AGUA DE DIOS </option>
+									<option >AGUACHICA </option>
+									<option >AGUADA </option>
+									<option >AGUADAS </option>
+									<option >AGUAZUL </option>
+									<option >AGUSTIN CODAZZI </option>
+									<option >AIPE </option>
+									<option >ALBAN  </option>
+									<option >ALBAN </option>
+									<option >ALBANIA </option>
+									<option >ALCALA </option>
+									<option >ALDANA </option>
+									<option >ALEJANDRIA </option>
+									<option >ALGECIRAS </option>
+									<option >ALMAGUER </option>
+									<option >ALMEIDA </option>
+									<option >ALPUJARRA </option>
+									<option >ALTAMIRA </option>
+									<option >ALTO BAUDO </option>
+									<option >ALTO CAUCA MARSELLA  </option>
+									<option >ALTO DEL ROSARIO </option>
+									<option >ALVARADO </option>
+									<option >AMAGA </option>
+									<option >AMALFI </option>
+									<option >AMBALEMA </option>
+									<option >ANAIME </option>
+									<option >ANAPOIMA </option>
+									<option >ANCUYA </option>
+									<option >ANDALUCIA </option>
+									<option >ANDES </option>
+									<option >ANGELOPOLIS </option>
+									<option >ANGOSTURA </option>
+									<option >ANOLAIMA </option>
+									<option >ANORI </option>
+									<option >ANSERMA </option>
+									<option >ANSERMANUEVO </option>
+									<option >ANZA </option>
+									<option >ANZOATEGUI </option>
+									<option >APARTADO </option>
+									<option >APIA  </option>
+									<option >APULO </option>
+									<option >AQUITANIA  </option>
+									<option >ARACATACA </option>
+									<option >ARANZAZU </option>
+									<option >ARATOCA </option>
+									<option >ARAUCA </option>
+									<option >ARAUQUITA </option>
+									<option >ARBELAEZ </option>
+									<option >ARBOLEDA </option>
+									<option >ARBOLEDAS  -</option>
+									<option >ARBOLETES </option>
+									<option >ARCABUCO </option>
+									<option >ARENAL </option>
+									<option >ARGELIA </option>
+									<option >ARIGUANI </option>
+									<option >ARJONA </option>
+									<option >ARMENIA </option>
+									<option >ARMERO-GUAYABAL  </option>
+									<option >ARROYO HONDO </option>
+									<option >ASTREA </option>
+									<option >ATACO  </option>
+									<option >ATRATO </option>
+									<option >AYAPEL  </option>
+									<option >BAGADO </option>
+									<option >BAHIA SOLANO </option>
+									<option >BAJO BAUDO </option>
+									<option >BAJO SAN JUAN </option>
+									<option >BALBOA  </option>
+									<option >BALBOA </option>
+									<option >BARANOA </option>
+									<option >BARAYA </option>
+									<option >BARBACOAS </option>
+									<option >BARBOSA </option>
+									<option >BARCELONA  </option>
+									<option >BARICHARA  </option>
+									<option >BARRAGAN </option>
+									<option >BARRANCA DE UPIA </option>
+									<option >BARRANCABERMEJA </option>
+									<option >BARRANCAS </option>
+									<option >BARRANCO DE LOBA </option>
+									<option >BARRANCO MINAS </option>
+									<option >BARRANQUILLA </option>
+									<option >BAYUNCA  </option>
+									<option >BECERRIL </option>
+									<option >BELALCAZAR </option>
+									<option >BELEN </option>
+									<option >BELEN DE LOS ANDAQUIES </option>
+									<option >BELEN DE UMBRIA  </option>
+									<option >BELENCITO  </option>
+									<option >BELLO </option>
+									<option >BELMIRA </option>
+									<option >BELTRAN </option>
+									<option >BERBEO </option>
+									<option >BERRUECOS  </option>
+									<option >BETANIA </option>
+									<option >BETEITIVA </option>
+									<option >BETULIA  </option>
+									<option >BETULIA </option>
+									<option >BITACO </option>
+									<option >BITUIMA </option>
+									<option >BOAVITA  </option>
+									<option >BOCA DE RASPADURA </option>
+									<option >BOCHALEMA </option>
+									<option >BOGOTA </option>
+									<option >BOJACA </option>
+									<option >BOJAYA </option>
+									<option >BOLIVAR  </option>
+									<option >BOLIVAR </option>
+									<option >BOLOMBOLO  </option>
+									<option >BOMBONA  </option>
+									<option >BOSCONIA </option>
+									<option >BOYACA </option>
+									<option >BRICENO </option>
+									<option >BUCARAMANGA </option>
+									<option >BUCARASICA </option>
+									<option >BUENAVENTURA </option>
+									<option >BUENAVISTA  </option>
+									<option >BUENAVISTA </option>
+									<option >BUENOS AIRES </option>
+									<option >BUESACO </option>
+									<option >BUGA </option>
+									<option >BUGALAGRANDE </option>
+									<option >BURITICA </option>
+									<option >BUSBANZA </option>
+									<option >CABRERA </option>
+									<option >CABUYARO </option>
+									<option >CACAHUAL </option>
+									<option >CACERES </option>
+									<option >CACHIPAY </option>
+									<option >CACHIRA </option>
+									<option >CACOTA </option>
+									<option >CAICEDO </option>
+									<option >CAICEDONIA </option>
+									<option >CAIMITO  </option>
+									<option >CAJAMARCA </option>
+									<option >CAJIBIO </option>
+									<option >CAJICA </option>
+									<option >CALAMAR </option>
+									<option >CALARCA  </option>
+									<option >CALDAS </option>
+									<option >CALDONO </option>
+									<option >CALI  </option>
+									<option >CALIFORNIA </option>
+									<option >CALOTO </option>
+									<option >CAMBAO </option>
+									<option >CAMPAMENTO </option>
+									<option >CAMPO DE LA CRUZ </option>
+									<option >CAMPOALEGRE </option>
+									<option >CAMPOHERMOSO </option>
+									<option >CANALETE </option>
+									<option >CANAS GORDAS </option>
+									<option >CANDELARIA </option>
+									<option >CANTAGALLO </option>
+									<option >CAPARRAPI </option>
+									<option >CAPITANEJO </option>
+									<option >CAPURGANA  </option>
+									<option >CAQUEZA </option>
+									<option >CARACOLI </option>
+									<option >CARAMANTA </option>
+									<option >CARCASI </option>
+									<option >CAREPA </option>
+									<option >CARMEN DE APICALA </option>
+									<option >CARMEN DE CARUPA </option>
+									<option >CARMEN DE VIBORAL </option>
+									<option >CAROLINA </option>
+									<option >CARTAGENA </option>
+									<option >CARTAGENA DEL CHAIRA </option>
+									<option >CARTAGO </option>
+									<option >CASABIANCA </option>
+									<option >CASTILLA LA NUEVA  </option>
+									<option >CATAMBUCO  </option>
+									<option >CAUCASIA </option>
+									<option >CEPITA </option>
+									<option >CERETE </option>
+									<option >CERINZA </option>
+									<option >CERRITO </option>
+									<option >CERRO SAN ANTONIO </option>
+									<option >CEYLAN </option>
+									<option >CHACHAGUI </option>
+									<option >CHAGUANI </option>
+									<option >CHALAN  </option>
+									<option >CHAMEZA </option>
+									<option >CHAPARRAL </option>
+									<option >CHARALA </option>
+									<option >CHARTA </option>
+									<option >CHIA </option>
+									<option >CHICORAL  </option>
+									<option >CHIGORODO </option>
+									<option >CHIMA </option>
+									<option >CHIMICHAGUA </option>
+									<option >CHINACOTA </option>
+									<option >CHINAUTA </option>
+									<option >CHINAVITA </option>
+									<option >CHINCHINA </option>
+									<option >CHINU </option>
+									<option >CHIPAQUE </option>
+									<option >CHIPATA </option>
+									<option >CHIQUINQUIRA </option>
+									<option >CHIQUIZA </option>
+									<option >CHIRIGUANA </option>
+									<option >CHISCAS </option>
+									<option >CHITA </option>
+									<option >CHITAGA </option>
+									<option >CHITARAQUE </option>
+									<option >CHIVATA </option>
+									<option >CHIVOLO </option>
+									<option >CHIVOR </option>
+									<option >CHOACHI </option>
+									<option >CHOCONTA </option>
+									<option >CICUCO </option>
+									<option >CIENAGA </option>
+									<option >CIENAGA DE ORO </option>
+									<option >CIENEGA </option>
+									<option >CIMITARRA </option>
+									<option >CIRCASIA  </option>
+									<option >CISNEROS </option>
+									<option >CLEMENCIA </option>
+									<option >COCNUCO  </option>
+									<option >COCORNA </option>
+									<option >COELLO </option>
+									<option >COGUA </option>
+									<option >COLOMBIA </option>
+									<option >COLON </option>
+									<option >COLOSO  </option>
+									<option >COMBITA </option>
+									<option >CONCEPCION </option>
+									<option >CONCORDIA </option>
+									<option >CONDOTO </option>
+									<option >CONFINES </option>
+									<option >CONSACA </option>
+									<option >CONTADERO </option>
+									<option >CONTRATACION  </option>
+									<option >CONVENCION  </option>
+									<option >COPACABANA </option>
+									<option >COPER </option>
+									<option >CORDOBA </option>
+									<option >CORINTO </option>
+									<option >COROMORO </option>
+									<option >COROZAL  </option>
+									<option >CORRALES </option>
+									<option >COSTA RICA </option>
+									<option >COTA </option>
+									<option >COTORRA </option>
+									<option >COVARACHIA </option>
+									<option >COVEÑAS  </option>
+									<option >COYAIMA  </option>
+									<option >CRAVO NORTE </option>
+									<option >CUASPUD </option>
+									<option >CUBARA </option>
+									<option >CUBARRAL </option>
+									<option >CUCAITA </option>
+									<option >CUCUNUBA </option>
+									<option >CUCUTA  </option>
+									<option >CUCUTILLA </option>
+									<option >CUITIVA </option>
+									<option >CUMARAL </option>
+									<option >CUMBAL </option>
+									<option >CUMBITARA </option>
+									<option >CUNDAY </option>
+									<option >CURILLO </option>
+									<option >CURITI  </option>
+									<option >CURRULAO </option>
+									<option >CURUMANI </option>
+									<option >DABEIBA </option>
+									<option >DAGUA </option>
+									<option >DAPA </option>
+									<option >DARIEN  </option>
+									<option >DIBULLA </option>
+									<option >DISTRACCION </option>
+									<option >DOLORES  </option>
+									<option >DON MATIAS </option>
+									<option >DORADAL  </option>
+									<option >DOS QUEBRADAS  </option>
+									<option >DUITAMA </option>
+									<option >DURANIA </option>
+									<option >EBEJICO </option>
+									<option >EL AGUILA </option>
+									<option >EL BAGRE </option>
+									<option >EL BANCO </option>
+									<option >EL BOLO  </option>
+									<option >EL BORDO </option>
+									<option >EL CAIRO  </option>
+									<option >EL CALVARIO </option>
+									<option >EL CANTON DEL SAN PABLO </option>
+									<option >EL CARMEN  </option>
+									<option >EL CARMEN </option>
+									<option >EL CARMEN DE BOLIVAR </option>
+									<option >EL CARMEN DE CHUCURI </option>
+									<option >EL CASTILLO </option>
+									<option >EL CERRITO </option>
+									<option >EL CHARCO </option>
+									<option >EL CHORRILLO </option>
+									<option >EL COCUY </option>
+									<option >EL COLEGIO </option>
+									<option >EL COPEY </option>
+									<option >EL DIFICIL </option>
+									<option >EL DONCELLO </option>
+									<option >EL DORADO </option>
+									<option >EL DOVIO </option>
+									<option >EL ESPINO </option>
+									<option >EL GUACAMAYO </option>
+									<option >EL GUAMO </option>
+									<option >EL LITORAL DEL SAN JUAN  </option>
+									<option >EL MOLINO </option>
+									<option >EL MORRO </option>
+									<option >EL PASO </option>
+									<option >EL PAUJIL </option>
+									<option >EL PENON  </option>
+									<option >EL PENON </option>
+									<option >EL PEÑOL </option>
+									<option >EL PINON </option>
+									<option >EL PLAYON </option>
+									<option >EL RETEN </option>
+									<option >EL ROSAL </option>
+									<option >EL ROSARIO </option>
+									<option >EL TABLON </option>
+									<option >EL TAMBO </option>
+									<option >EL TARRA </option>
+									<option >EL ZULIA  </option>
+									<option >ELIAS </option>
+									<option >ENCINO </option>
+									<option >ENCISO  </option>
+									<option >ENTRERRIOS </option>
+									<option >ENVIGADO </option>
+									<option >ESPINAL </option>
+									<option >FACATATIVA </option>
+									<option >FALAN </option>
+									<option >FILADELFIA </option>
+									<option >FILANDIA  </option>
+									<option >FIRAVITOBA </option>
+									<option >FLANDES  </option>
+									<option >FLORENCIA </option>
+									<option >FLORESTA </option>
+									<option >FLORIAN </option>
+									<option >FLORIDA  </option>
+									<option >FLORIDABLANCA  </option>
+									<option >FOMEQUE </option>
+									<option >FONSECA </option>
+									<option >FORTUL </option>
+									<option >FOSCA </option>
+									<option >FRANCISCO PIZARRO </option>
+									<option >FREDONIA </option>
+									<option >FRESNO </option>
+									<option >FRONTINO </option>
+									<option >FUENTE DE ORO </option>
+									<option >FUNDACION </option>
+									<option >FUNES </option>
+									<option >FUNZA </option>
+									<option >FUQUENE </option>
+									<option >FUSAGASUGA </option>
+									<option >GACHALA </option>
+									<option >GACHANCIPA </option>
+									<option >GACHANTIVA </option>
+									<option >GACHETA </option>
+									<option >GALAN </option>
+									<option >GALAPA </option>
+									<option >GALERAS  </option>
+									<option >GALICIA  </option>
+									<option >GAMA </option>
+									<option >GAMARRA </option>
+									<option >GAMBITA  </option>
+									<option >GAMEZA </option>
+									<option >GARAGOA </option>
+									<option >GARZON </option>
+									<option >GENOVA  </option>
+									<option >GIGANTE </option>
+									<option >GINEBRA </option>
+									<option >GIRALDO </option>
+									<option >GIRARDOT </option>
+									<option >GIRARDOTA </option>
+									<option >GIRON  </option>
+									<option >GOMEZ PLATA </option>
+									<option >GONZALEZ </option>
+									<option >GRAMALOTE </option>
+									<option >GRANADA </option>
+									<option >GUACA </option>
+									<option >GUACAMAYAS </option>
+									<option >GUACARI </option>
+									<option >GUACHAVEZ  </option>
+									<option >GUACHENE </option>
+									<option >GUACHETA </option>
+									<option >GUACHUCAL </option>
+									<option >GUADALUPE </option>
+									<option >GUADUAS </option>
+									<option >GUAITARILLA </option>
+									<option >GUALMATAN </option>
+									<option >GUAMAL </option>
+									<option >GUAMO </option>
+									<option >GUAPI </option>
+									<option >GUAPOTA </option>
+									<option >GUARANDA  </option>
+									<option >GUARNE </option>
+									<option >GUASCA </option>
+									<option >GUATAPE </option>
+									<option >GUATAQUI </option>
+									<option >GUATAVITA </option>
+									<option >GUATEQUE </option>
+									<option >GUATICA </option>
+									<option >GUAVATA </option>
+									<option >GUAYABAL DE SIQUIMA </option>
+									<option >GUAYABETAL </option>
+									<option >GUAYATA </option>
+									<option >GUEPSA </option>
+									<option >GUICAN </option>
+									<option >GUTIERREZ </option>
+									<option >HACARI </option>
+									<option >HATILLO DE LOBA </option>
+									<option >HATO </option>
+									<option >HATO COROZAL </option>
+									<option >HATONUEVO </option>
+									<option >HELICONIA </option>
+									<option >HERRAN </option>
+									<option >HERVEO </option>
+									<option >HISPANIA </option>
+									<option >HOBO </option>
+									<option >HONDA </option>
+									<option >IBAGUE </option>
+									<option >ICONONZO </option>
+									<option >ILES </option>
+									<option >IMUES </option>
+									<option >INIRIDA </option>
+									<option >INZA </option>
+									<option >IPIALES </option>
+									<option >IQUIRA </option>
+									<option >ISNOS </option>
+									<option >ITAGUI </option>
+									<option >ITSMINA </option>
+									<option >ITUANGO </option>
+									<option >IZA </option>
+									<option >JAMBALO </option>
+									<option >JAMUNDI  </option>
+									<option >JARDIN </option>
+									<option >JENESANO </option>
+									<option >JERICO </option>
+									<option >JERUSALEN </option>
+									<option >JESUS MARIA </option>
+									<option >JORDAN </option>
+									<option >JOSE MARIA HERNANDEZ </option>
+									<option >JUAN DE ACOSTA </option>
+									<option >JUANCHACO  </option>
+									<option >JUNIN </option>
+									<option >JURADO </option>
+									<option >KM 26  </option>
+									<option >LA APARTADA </option>
+									<option >LA ARGENTINA </option>
+									<option >LA BELLEZA </option>
+									<option >LA BOCANA  </option>
+									<option >LA BUITRERA  </option>
+									<option >LA CALERA </option>
+									<option >LA CAPILLA </option>
+									<option >LA CARBONERA </option>
+									<option >LA CEJA </option>
+									<option >LA CELIA  </option>
+									<option >LA CRUZ </option>
+									<option >LA CUMBRE  </option>
+									<option >LA DORADA </option>
+									<option >LA ESPERANZA </option>
+									<option >LA ESTRELLA </option>
+									<option >LA FE  </option>
+									<option >LA FLORIDA </option>
+									<option >LA GLORIA </option>
+									<option >LA GUADALUPE </option>
+									<option >LA HERRADURA </option>
+									<option >LA IBERIA  </option>
+									<option >LA JAGUA DEL PILAR </option>
+									<option >LA JAGUA IBIRICO </option>
+									<option >LA LLANADA </option>
+									<option >LA MACARENA </option>
+									<option >LA MERCED </option>
+									<option >LA MESA </option>
+									<option >LA MONTANITA </option>
+									<option >LA NUBIA </option>
+									<option >LA PALMA </option>
+									<option >LA PAZ  </option>
+									<option >LA PAZ </option>
+									<option >LA PENA </option>
+									<option >LA PINTADA </option>
+									<option >LA PLATA </option>
+									<option >LA PLAYA  </option>
+									<option >LA SALINA </option>
+									<option >LA SIERRA  </option>
+									<option >LA SIERRA </option>
+									<option >LA TEBAIDA </option>
+									<option >LA TOLA </option>
+									<option >LA UNION  </option>
+									<option >LA UNION </option>
+									<option >LA URIBE </option>
+									<option >LA UVITA </option>
+									<option >LA VEGA </option>
+									<option >LA VICTORIA  </option>
+									<option >LA VICTORIA </option>
+									<option >LA VIRGINIA  </option>
+									<option >LABATECA </option>
+									<option >LABRANZAGRANDE </option>
+									<option >LADRILLEROS  </option>
+									<option >LAGO CALIMA  </option>
+									<option >LANDAZURI </option>
+									<option >LEBRIJA  </option>
+									<option >LEIVA </option>
+									<option >LEJANIAS </option>
+									<option >LENGUAZAQUE </option>
+									<option >LERIDA </option>
+									<option >LIBANO </option>
+									<option >LIBORINA </option>
+									<option >LINARES </option>
+									<option >LLANADAS </option>
+									<option >LLORO </option>
+									<option >LOPEZ </option>
+									<option >LORICA </option>
+									<option >LOS ANDES </option>
+									<option >LOS CORDOBAS </option>
+									<option >LOS PALMITOS  </option>
+									<option >LOS PATIOS  </option>
+									<option >LOS SANTOS </option>
+									<option >LOURDES </option>
+									<option >LURUACO </option>
+									<option >MACANAL </option>
+									<option >MACARAVITA </option>
+									<option >MACEO </option>
+									<option >MACHETA </option>
+									<option >MADRID </option>
+									<option >MADRIGAL </option>
+									<option >MAGANGUE </option>
+									<option >MAGUI </option>
+									<option >MAGUNCIA </option>
+									<option >MAHATES </option>
+									<option >MAICAO </option>
+									<option >MAJAGUAL  </option>
+									<option >MALAGA </option>
+									<option >MALAGANA </option>
+									<option >MALAMBO </option>
+									<option >MALLAMA </option>
+									<option >MANATI </option>
+									<option >MANAURE </option>
+									<option >MANAURE BALCON DEL CESAR </option>
+									<option >MANI </option>
+									<option >MANIZALES </option>
+									<option >MANTA </option>
+									<option >MANZANARES </option>
+									<option >MAPIRIPAN </option>
+									<option >MARGARITA </option>
+									<option >MARIA LA BAJA </option>
+									<option >MARINILLA </option>
+									<option >MARIPI </option>
+									<option >MARIQUITA  </option>
+									<option >MARMATO </option>
+									<option >MARQUETALIA </option>
+									<option >MARSELLA  </option>
+									<option >MARULANDA </option>
+									<option >MATANZA </option>
+									<option >MEDELLIN </option>
+									<option >MEDINA </option>
+									<option >MELGAR </option>
+									<option >MERCADERES </option>
+									<option >MESETAS </option>
+									<option >MILAN </option>
+									<option >MIRAFLORES </option>
+									<option >MIRANDA </option>
+									<option >MISTRATO  </option>
+									<option >MOCOA  </option>
+									<option >MOGOTES </option>
+									<option >MOLAGAVITA </option>
+									<option >MOMIL </option>
+									<option >MOMPOS </option>
+									<option >MONDOMO  </option>
+									<option >MONGUA </option>
+									<option >MONGUI </option>
+									<option >MONIQUIRA </option>
+									<option >MONITOS </option>
+									<option >MONTEBELLO </option>
+									<option >MONTECRISTO </option>
+									<option >MONTELIBANO </option>
+									<option >MONTENEGRO </option>
+									<option >MONTERIA </option>
+									<option >MONTERREY </option>
+									<option >MORALES </option>
+									<option >MORELIA </option>
+									<option >MORICHAL NUEVO </option>
+									<option >MORROA  </option>
+									<option >MOSQUERA </option>
+									<option >MOTAVITA </option>
+									<option >MURILLO </option>
+									<option >MURINDO </option>
+									<option >MUTATA </option>
+									<option >MUTISCUA </option>
+									<option >MUZO </option>
+									<option >NARINO </option>
+									<option >NATAGA </option>
+									<option >NATAGAIMA </option>
+									<option >NECHI </option>
+									<option >NECOCLI </option>
+									<option >NEIRA </option>
+									<option >NEIVA </option>
+									<option >NEMOCON </option>
+									<option >NILO </option>
+									<option >NIMAIMA </option>
+									<option >NOBSA </option>
+									<option >NOCAIMA </option>
+									<option >NORCASIA </option>
+									<option >NOVITA </option>
+									<option >NUEVO COLON </option>
+									<option >NUNCHIA </option>
+									<option >NUQUI </option>
+									<option >OBANDO </option>
+									<option >OCAMONTE  </option>
+									<option >OCANA  </option>
+									<option >OIBA  </option>
+									<option >OICATA </option>
+									<option >OLAYA </option>
+									<option >OLAYA HERRERA </option>
+									<option >ONZAGA  </option>
+									<option >OPORAPA </option>
+									<option >ORITO </option>
+									<option >OROCUE </option>
+									<option >ORTEGA  </option>
+									<option >OSPINA </option>
+									<option >OTANCHE </option>
+									<option >OVEJAS  </option>
+									<option >PACHAVITA </option>
+									<option >PACHO </option>
+									<option >PACORA </option>
+									<option >PADILLA </option>
+									<option >PAEZ </option>
+									<option >PAICOL </option>
+									<option >PAILITAS </option>
+									<option >PAIME </option>
+									<option >PAIPA </option>
+									<option >PAJARITO </option>
+									<option >PALERMO  </option>
+									<option >PALERMO </option>
+									<option >PALESTINA </option>
+									<option >PALMAR </option>
+									<option >PALMAR DE VARELA </option>
+									<option >PALMAS SOCORRO </option>
+									<option >PALMASECA  </option>
+									<option >PALMIRA </option>
+									<option >PALMITO  </option>
+									<option >PALOCABILDO  </option>
+									<option >PAMPLONA </option>
+									<option >PAMPLONITA  </option>
+									<option >PANA PANA </option>
+									<option >PANDI </option>
+									<option >PANQUEBA </option>
+									<option >PARAMO </option>
+									<option >PARATEBUENO </option>
+									<option >PASCA </option>
+									<option >PASTO </option>
+									<option >PATIA</option>
+									<option >PAUNA </option>
+									<option >PAVAS  </option>
+									<option >PAYA </option>
+									<option >PAZ DE ARIPORO </option>
+									<option >PAZ DE RIO </option>
+									<option >PEDRAZA </option>
+									<option >PELAYA </option>
+									<option >PENOL </option>
+									<option >PENSILVANIA </option>
+									<option >PEQUE </option>
+									<option >PEREIRA  </option>
+									<option >PESCA </option>
+									<option >PIAMONTE </option>
+									<option >PIEDECUESTA </option>
+									<option >PIEDRAS </option>
+									<option >PIENDAMO </option>
+									<option >PIJAO </option>
+									<option >PIJINO DEL CARMEN </option>
+									<option >PILCUAN  </option>
+									<option >PINCHOTE </option>
+									<option >PINILLOS </option>
+									<option >PIOJO </option>
+									<option >PISBA </option>
+									<option >PITAL </option>
+									<option >PITALITO </option>
+									<option >PIVIJAY </option>
+									<option >PLANADAS  </option>
+									<option >PLANETA RICA </option>
+									<option >PLATO </option>
+									<option >POLICARPA </option>
+									<option >POLONUEVO </option>
+									<option >PONEDERA </option>
+									<option >POPAYAN </option>
+									<option >PORE </option>
+									<option >POTOSI </option>
+									<option >POTRERITO  </option>
+									<option >PRADERA </option>
+									<option >PRADO </option>
+									<option >PROVIDENCIA </option>
+									<option >PROVIDENCIA-BRICENO </option>
+									<option >PTO NARE </option>
+									<option >PUEBLO NUEVO </option>
+									<option >PUEBLO RICO </option>
+									<option >PUEBLO TAPAO </option>
+									<option >PUEBLORRICO </option>
+									<option >PUEBLOVIEJO </option>
+									<option >PUENTE NACIONAL </option>
+									<option >PUERRES </option>
+									<option >PUERTO ASIS  </option>
+									<option >PUERTO BERRIO </option>
+									<option >PUERTO BOYACA </option>
+									<option >PUERTO CAICEDO  </option>
+									<option >PUERTO CLAVER  </option>
+									<option >PUERTO COLOMBIA </option>
+									<option >PUERTO CONCORDIA </option>
+									<option >PUERTO ESCONDIDO </option>
+									<option >PUERTO GAITAN </option>
+									<option >PUERTO GUZMAN  </option>
+									<option >PUERTO LEGUIZAMO  </option>
+									<option >PUERTO LIBERTADOR </option>
+									<option >PUERTO LLERAS </option>
+									<option >PUERTO LOPEZ </option>
+									<option >PUERTO PARRA </option>
+									<option >PUERTO PERALES </option>
+									<option >PUERTO RICO </option>
+									<option >PUERTO RONDON </option>
+									<option >PUERTO SALGAR </option>
+									<option >PUERTO SANTANDER  </option>
+									<option >PUERTO TEJADA </option>
+									<option >PUERTO TRIUNFO </option>
+									<option >PUERTO WILCHES </option>
+									<option >PULI </option>
+									<option >PUPIALES </option>
+									<option >PURACE </option>
+									<option >PURIFICACION </option>
+									<option >PURISIMA </option>
+									<option >QUEBRADANEGRA </option>
+									<option >QUEREMAL </option>
+									<option >QUETAME </option>
+									<option >QUIBDO </option>
+									<option >QUIMBAYA </option>
+									<option >QUINCHIA  </option>
+									<option >QUIPAMA </option>
+									<option >QUIPILE </option>
+									<option >RAGONVALIA </option>
+									<option >RAMIRIQUI </option>
+									<option >RAQUIRA </option>
+									<option >RECETOR </option>
+									<option >REGIDOR </option>
+									<option >REMEDIOS </option>
+									<option >REMOLINO </option>
+									<option >REPELON </option>
+									<option >RESTREPO </option>
+									<option >RETIRO </option>
+									<option >RICAURTE </option>
+									<option >RIO DE ORO </option>
+									<option >RIO VIEJO </option>
+									<option >RIOBLANCO  </option>
+									<option >RIOFRIO </option>
+									<option >RIOHACHA </option>
+									<option >RIONEGRO </option>
+									<option >RIOSUCIO </option>
+									<option >RISARALDA </option>
+									<option >RIVERA </option>
+									<option >ROBERTO PAYAN  </option>
+									<option >ROLDANILLO  </option>
+									<option >RONCESVALLES </option>
+									<option >RONDON </option>
+									<option >ROSAFLORIDA  </option>
+									<option >ROSAS </option>
+									<option >ROVIRA  </option>
+									<option >ROZO </option>
+									<option >SABANA DE TORRES </option>
+									<option >SABANAGRANDE </option>
+									<option >SABANALARGA </option>
+									<option >SABANETA </option>
+									<option >SABOYA </option>
+									<option >SACAMA </option>
+									<option >SACHICA </option>
+									<option >SAHAGUN </option>
+									<option >SALADOBLANCO </option>
+									<option >SALAMINA </option>
+									<option >SALAZAR  </option>
+									<option >SALDANA  </option>
+									<option >SALENTO </option>
+									<option >SALGAR </option>
+									<option >SALONICA </option>
+									<option >SAMACA </option>
+									<option >SAMANA </option>
+									<option >SAMANIEGO </option>
+									<option >SAMARIA  </option>
+									<option >SAMPUES  </option>
+									<option >SAN AGUSTIN </option>
+									<option >SAN ALBERTO </option>
+									<option >SAN ANDRES  </option>
+									<option >SAN ANDRES </option>
+									<option >SAN ANDRES SOTAVENTO </option>
+									<option >SAN ANTERO </option>
+									<option >SAN ANTONIO  </option>
+									<option >SAN ANTONIO TEQUENDAMA </option>
+									<option >SAN BENITO </option>
+									<option >SAN BENITO ABAD  </option>
+									<option >SAN BERNARDO </option>
+									<option >SAN BERNARDO DEL VIENTO </option>
+									<option >SAN CALIXTO </option>
+									<option >SAN CARLOS </option>
+									<option >SAN CARLOS GUAROA </option>
+									<option >SAN CAYETANO  </option>
+									<option >SAN CAYETANO </option>
+									<option >SAN CRISTOBAL </option>
+									<option >SAN DIEGO </option>
+									<option >SAN EDUARDO </option>
+									<option >SAN ESTANISLAO </option>
+									<option >SAN FELIPE </option>
+									<option >SAN FERNANDO </option>
+									<option >SAN FRANCISCO  </option>
+									<option >SAN FRANCISCO </option>
+									<option >SAN GIL </option>
+									<option >SAN JACINTO </option>
+									<option >SAN JACINTO DEL CAUCA </option>
+									<option >SAN JERONIMO </option>
+									<option >SAN JOAQUIN </option>
+									<option >SAN JOSE </option>
+									<option >SAN JOSE DE FRAGUA </option>
+									<option >SAN JOSE DE LA MONTANA </option>
+									<option >SAN JOSE DE MIRANDA  </option>
+									<option >SAN JOSE DE PARE </option>
+									<option >SAN JOSE DE RISARALDA </option>
+									<option >SAN JOSE DEL NUS </option>
+									<option >SAN JOSE DEL PALMAR  </option>
+									<option >SAN JUAN DE ARAMA </option>
+									<option >SAN JUAN DE BETULIA  </option>
+									<option >SAN JUAN DE RIO SECO </option>
+									<option >SAN JUAN DE URABA </option>
+									<option >SAN JUAN DEL CESAR </option>
+									<option >SAN JUAN NEPOMUCENO </option>
+									<option >SAN JUANITO </option>
+									<option >SAN LORENZO </option>
+									<option >SAN LUIS </option>
+									<option >SAN LUIS DE GACENO </option>
+									<option >SAN LUIS DE PALENQUE </option>
+									<option >SAN MARCOS  </option>
+									<option >SAN MARTIN </option>
+									<option >SAN MARTIN DE LOBA </option>
+									<option >SAN MATEO </option>
+									<option >SAN MIGUEL </option>
+									<option >SAN MIGUEL DE SEMA </option>
+									<option >SAN ONOFRE  </option>
+									<option >SAN PABLO </option>
+									<option >SAN PABLO DE BORBU </option>
+									<option >SAN PABLO DE BORBUR </option>
+									<option >SAN PEDRO  </option>
+									<option >SAN PEDRO </option>
+									<option >SAN PEDRO DE CARTAGO </option>
+									<option >SAN PEDRO DE URABA </option>
+									<option >SAN PELAYO </option>
+									<option >SAN RAFAEL </option>
+									<option >SAN REMO </option>
+									<option >SAN ROQUE </option>
+									<option >SAN SEBASTIAN </option>
+									<option >SAN SEBASTIAN BUENAVISTA </option>
+									<option >SAN VICENTE </option>
+									<option >SAN VICENTE DE CHUCURI  </option>
+									<option >SAN VICENTE DEL CAGUAN </option>
+									<option >SAN ZENON </option>
+									<option >SANDONA </option>
+									<option >SANTA ANA </option>
+									<option >SANTA BARBARA </option>
+									<option >SANTA CATALINA </option>
+									<option >SANTA CRUZ </option>
+									<option >SANTA HELENA </option>
+									<option >SANTA HELENA DEL OPON </option>
+									<option >SANTA ISABEL </option>
+									<option >SANTA LUCIA  </option>
+									<option >SANTA LUCIA </option>
+									<option >SANTA MARIA </option>
+									<option >SANTA MARTA </option>
+									<option >SANTA ROSA </option>
+									<option >SANTA ROSA DE CABAL  </option>
+									<option >SANTA ROSA DE OSOS </option>
+									<option >SANTA ROSA DE VITERBO </option>
+									<option >SANTA ROSA DEL SUR </option>
+									<option >SANTA SOFIA </option>
+									<option >SANTABARBARA </option>
+									<option >SANTAFE DE ANTIOQUIA </option>
+									<option >SANTANA </option>
+									<option >SANTANDER DE QUILICHAO </option>
+									<option >SANTIAGO </option>
+									<option >SANTO DOMINGO </option>
+									<option >SANTO TOMAS </option>
+									<option >SANTUARIO </option>
+									<option >SAPUYES </option>
+									<option >SARAVENA </option>
+									<option >SARDINATA  </option>
+									<option >SASAIMA </option>
+									<option >SATIVANORTE </option>
+									<option >SATIVASUR </option>
+									<option >SEGOVIA </option>
+									<option >SESQUILE </option>
+									<option >SEVILLA  </option>
+									<option >SEVILLA </option>
+									<option >SIACHOQUE </option>
+									<option >SIBATE </option>
+									<option >SIBUNDOY </option>
+									<option >SILOS </option>
+									<option >SILVANIA </option>
+									<option >SILVIA </option>
+									<option >SIMACOTA </option>
+									<option >SIMIJACA </option>
+									<option >SIMITI </option>
+									<option >SINCE  </option>
+									<option >SINCELEJO </option>
+									<option >SINCERIN </option>
+									<option >SIPI </option>
+									<option >SITIONUEVO </option>
+									<option >SOACHA </option>
+									<option >SOATA </option>
+									<option >SOCHA </option>
+									<option >SOCORRO </option>
+									<option >SOCOTA </option>
+									<option >SOGAMOSO </option>
+									<option >SOLANO </option>
+									<option >SOLEDAD </option>
+									<option >SOLITA </option>
+									<option >SOMONDOCO </option>
+									<option >SONSO  </option>
+									<option >SONSON </option>
+									<option >SOPETRAN </option>
+									<option >SOPLAVIENTO </option>
+									<option >SOPO </option>
+									<option >SORA </option>
+									<option >SORACA </option>
+									<option >SOTAQUIRA </option>
+									<option >SOTARA </option>
+									<option >SOTOMAYOR  </option>
+									<option >SUAITA </option>
+									<option >SUAITA</option>
+									<option >SUAN </option>
+									<option >SUAREZ  </option>
+									<option >SUAREZ </option>
+									<option >SUAZA </option>
+									<option >SUBACHOQUE </option>
+									<option >SUCRE  </option>
+									<option >SUCRE </option>
+									<option >SUESCA </option>
+									<option >SUPATA </option>
+									<option >SUPIA </option>
+									<option >SURATA</option>
+									<option >SUSA </option>
+									<option >SUSACON </option>
+									<option >SUSON  </option>
+									<option >SUTAMARCHAN </option>
+									<option >SUTATAUSA </option>
+									<option >SUTATENZA </option>
+									<option >TABIO </option>
+									<option >TADO </option>
+									<option >TALAIGUA NUEVO </option>
+									<option >TAMALAMEQUE </option>
+									<option >TAMARA </option>
+									<option >TAME </option>
+									<option >TAMESIS </option>
+									<option >TAMINANGO </option>
+									<option >TANGUA </option>
+									<option >TAPARCAL </option>
+									<option >TARAZA </option>
+									<option >TARQUI </option>
+									<option >TARSO </option>
+									<option >TASCO </option>
+									<option >TAURAMENA </option>
+									<option >TAUSA </option>
+									<option >TELLO </option>
+									<option >TENA </option>
+									<option >TENERIFE </option>
+									<option >TENJO </option>
+									<option >TENZA </option>
+									<option >TEORAMA </option>
+									<option >TERUEL </option>
+									<option >TESALIA </option>
+									<option >TIBACUY </option>
+									<option >TIBANA </option>
+									<option >TIBASOSA </option>
+									<option >TIBIRITA </option>
+									<option >TIBU  </option>
+									<option >TIERRALTA </option>
+									<option >TIMANA </option>
+									<option >TIMBIO </option>
+									<option >TIMBIQUI </option>
+									<option >TINJACA </option>
+									<option >TIPACOQUE </option>
+									<option >TIQUISIO </option>
+									<option >TITIRIBI </option>
+									<option >TOCA </option>
+									<option >TOCAIMA </option>
+									<option >TOCANCIPA </option>
+									<option >TOGUI </option>
+									<option >TOLEDO </option>
+									<option >TOLU  </option>
+									<option >TOLUVIEJO  </option>
+									<option >TONA </option>
+									<option >TOPAGA </option>
+									<option >TOPAIPI </option>
+									<option >TORIBIO </option>
+									<option >TORO  </option>
+									<option >TOTA </option>
+									<option >TOTORO </option>
+									<option >TRINIDAD </option>
+									<option >TRUJILLO </option>
+									<option >TUBARA </option>
+									<option >TULUA </option>
+									<option >TUMACO </option>
+									<option >TUNIA  </option>
+									<option >TUNJA </option>
+									<option >TUNUNGUA </option>
+									<option >TUQUERRES </option>
+									<option >TURBACO </option>
+									<option >TURBANA </option>
+									<option >TURBO </option>
+									<option >TURMEQUE </option>
+									<option >TUTA </option>
+									<option >TUTASA </option>
+									<option >UBALA </option>
+									<option >UBAQUE </option>
+									<option >UBATE </option>
+									<option >ULLOA </option>
+									<option >UMBITA </option>
+									<option >UNE </option>
+									<option >UNGUIA </option>
+									<option >URAMITA </option>
+									<option >URIBE  </option>
+									<option >URIBIA </option>
+									<option >URRAO </option>
+									<option >URUMITA </option>
+									<option >USIACURI </option>
+									<option >UTICA </option>
+									<option >VALDIVIA </option>
+									<option >VALENCIA </option>
+									<option >VALLE DE SAN JOSE </option>
+									<option >VALLE DE SAN JUAN  </option>
+									<option >VALLE DEL GUAMEZ  </option>
+									<option >VALLEDUPAR </option>
+									<option >VALPARAISO </option>
+									<option >VEGACHI </option>
+									<option >VELEZ </option>
+									<option >VENADILLO  </option>
+									<option >VENECIA  </option>
+									<option >VENECIA </option>
+									<option >VENTAQUEMADA </option>
+									<option >VERGARA </option>
+									<option >VERSALLES  </option>
+									<option >VETAS </option>
+									<option >VIANI </option>
+									<option >VICTORIA </option>
+									<option >VIGIA DEL FUERTE </option>
+									<option >VIJES </option>
+									<option >VILLA CARO </option>
+									<option >VILLA DE LEYVA </option>
+									<option >VILLA DEL ROSARIO </option>
+									<option >VILLAGARZON  </option>
+									<option >VILLAGOMEZ </option>
+									<option >VILLAGORGONA </option>
+									<option >VILLAHERMOSA  </option>
+									<option >VILLAMARIA </option>
+									<option >VILLANUEVA  </option>
+									<option >VILLANUEVA </option>
+									<option >VILLAPINZON </option>
+									<option >VILLARICA  </option>
+									<option >VILLARRICA </option>
+									<option >VILLAVICENCIO </option>
+									<option >VILLAVIEJA </option>
+									<option >VILLETA </option>
+									<option >VIOTA</option>
+									<option >VIRACACHA </option>
+									<option >VISTA HERMOSA </option>
+									<option >VITERBO </option>
+									<option >YACOPI </option>
+									<option >YACUANQUER </option>
+									<option >YAGUARA </option>
+									<option >YALI </option>
+									<option >YARUMAL </option>
+									<option >YOLOMBO </option>
+									<option >YONDO </option>
+									<option >YOPAL </option>
+									<option >YOTOCO  </option>
+									<option >YUMBO  </option>
+									<option >ZAMBRANO </option>
+									<option >ZAPATOCA </option>
+									<option >ZARAGOZA </option>
+									<option >ZARZAL </option>
+									<option >ZETAQUIRA </option>
+									<option >ZIPACON </option>
+									<option >ZIPAQUIRA </option>
+
+								</select>-->

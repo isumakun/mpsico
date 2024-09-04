@@ -1,0 +1,63 @@
+
+.radio.inline {
+    display: inline-flex !important;
+}
+
+.img-responsive{
+	width: 100% !important
+}
+
+.box-body {
+    padding: 20px !important;
+}
+
+.box-header>.btn{
+	margin-left: 5px;
+}
+
+.small-box .iconx {
+    -webkit-transition: none;
+    -o-transition: none;
+    transition: none;
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    z-index: 0;
+    font-size: 50px;
+    color: rgba(255,255,255,0.8);
+}
+
+.select2{
+	width: 100%;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #d2d6de;;
+    border-radius: 0px;
+}
+
+.select2-container .select2-selection--single {
+    height: 34px;
+}
+
+.box-primary{
+	overflow: hidden;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #315e76;
+}
+
+.box-title {
+    font-weight: bolder;
+    margin: 10px 5px !important;
+}
+
+.graphic{
+	margin: 20px;
+}
+
+.highcharts-title{
+	font-weight: bolder;
+}
