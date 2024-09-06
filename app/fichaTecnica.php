@@ -194,7 +194,7 @@
             <div class="form-group">
                 <label class="control-label" for="inputDefault">Indique cuantas horas diarias de trabajo
                 están establecidas habitualmente por la empresa para su cargo</label>
-                <input type="text" class="form-control" required="" maxlength="2"  name="horas" id="horas" placeholder="Horas que dicta la empresa a su cargo">
+                <input type="number" class="form-control" required="" maxlength="2" min="1"  name="horas" id="horas" placeholder="Horas que dicta la empresa a su cargo">
             </div>
             <div class="form-group">
                 <label for="select" class="control-label">Seleccione el tipo de salario que recibe</label>

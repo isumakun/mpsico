@@ -1,361 +1,203 @@
 <?php
-
 function conectar() {
-    $link = mysql_connect("localhost", "mpsico_admin", "310.310.") or die("Error al conectar" . mysql_error());
-    mysql_select_db("mpsico_entrevistas") or die("No se pudo conectar a Entrevistas");
-    return $link;
+    try {
+        $pdo = new PDO('mysql:host=localhost;dbname=mpsico', 'master', '310.310.');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo;
+    } catch (PDOException $e) {
+        die("Error al conectar: " . $e->getMessage());
+    }
 }
 
 function getLink() {
-    $link = conectar();
-    $sql = "select link from prueba where idPrueba='1'";
-    $result = mysql_query($sql, $link);
-    $r = mysql_result($result, 0);
+    $pdo = conectar();
+    $sql = "SELECT link FROM prueba WHERE idPrueba = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => 1]);
+    $r = $stmt->fetchColumn();
     $r = str_replace("watch?v=", "v/", $r);
     return $r;
 }
 
 function getIDByUser($usuario) {
-    $link = conectar();
-    $sql = "select idAspirante from aspirante where Cedula='$usuario'";
-    $result = mysql_query($sql, $link);
-    $idUser = mysql_result($result, 0, 0);
+    $pdo = conectar();
+    $sql = "SELECT idAspirante FROM aspirante WHERE Cedula = :cedula ORDER BY idAspirante DESC LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['cedula' => $usuario]);
+    $idUser = $stmt->fetchColumn();
     return $idUser;
 }
 
 function getConsentimiento($usuario) {
-    $link = conectar();
-    $sql = "select consentimiento from usuario where usuario='$usuario'";
-    $result = mysql_query($sql, $link);
-    $r = mysql_result($result, 0, 0);
-    if ($r == 1) {
-        return 'true';
-    } else {
-        return 'false';
-    }
+    $pdo = conectar();
+    $sql = "SELECT consentimiento FROM usuario WHERE usuario = :usuario ORDER BY idUsuario DESC LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['usuario' => $usuario]);
+    $r = $stmt->fetchColumn();
+    return $r == 1 ? 'true' : 'false';
 }
 
 function getNumeroAspirantes($empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)";
+    $pdo = conectar();
+    $sql = "SELECT COUNT(DISTINCT ft.idFichaTrabajo)
+            FROM fichapersonal AS fp
+            INNER JOIN aspirante AS a ON fp.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN fichatrabajo AS ft ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE 1=1";
+
+    $params = [];
+    if ($empresa != 'all') {
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND e.idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
+    }
+
+    if ($area != 'all') {
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchColumn();
+}
+
+function getEmpresas($empresas) {
+    $pdo = conectar();
+    $placeholders = implode(',', array_fill(0, count($empresas), '?'));
+    $sql = "SELECT COUNT(*) FROM empresa AS e WHERE e.idEmpresa IN ($placeholders)";
     
-        $sql .= " WHERE idEmpresa = $empresa";
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
-
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($empresas);
+    return $stmt->fetchColumn();
 }
 
-function getResultGenero($genero, $empresa, $area) {
-    $link = conectar();
+function getFichaTecnica($empresa, $area) {
+    $pdo = conectar();
     $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            where Sexo = '$genero'";
+            FROM fichapersonal AS fp
+            INNER JOIN aspirante AS a ON fp.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN fichatrabajo AS ft ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante";
 
-    if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
-    }
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
-
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
-}
-
-function getByEstadoCivil($estado, $empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            where EstadoCivil =  '$estado'";
-
-    if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
-    }
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
-
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
-}
-
-function getByEscolaridad($escolaridad, $empresa, $area) {
-    $link = conectar();
-    $escolaridad = utf8_encode($escolaridad);
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE NivelEstudios =  '$escolaridad'";
-
-    if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
-    }
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
+    $params = [];
     
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
-}
-
-function getByEstrato($estrato, $empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Estrato =  '$estrato'";
-
     if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " WHERE e.idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
+
+    $sql .= " GROUP BY a.idAspirante";
     
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
-}
-
-function getByVivienda($vivienda, $empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Vivienda =  '$vivienda'";
-
-    if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
-    }
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
-}
-
-function getByAntiguedad($rango, $empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Tiempo =  '$rango'";
-
-    if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
-    }
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
-    
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
-}
-
-function getByTipoCargo($tipo, $empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-            FROM
-                fichapersonal
-                INNER JOIN aspirante 
-                    ON (fichapersonal.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN fichatrabajo 
-                    ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-                INNER JOIN empresa 
-                    ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE TipoCargo =  '$tipo'";
-
-    if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
-    }
-
-    if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
-    }
-    
-    $sql .= " GROUP BY idFichaTrabajo";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getByIntralaboral($baremo, $empresa, $area, $forma) {
-    $link = conectar();
-    if($forma == "A"){
-        $sql = "SELECT *
-            FROM
-            fichatrabajo
-            INNER JOIN aspirante 
-            ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN cuestionario 
-            ON (cuestionario.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN empresa 
-            ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Numero = 3
-            AND BaremoPTC = '$baremo' ";
-    }else if($forma == "B"){
-        $sql = "SELECT *
-            FROM
-            fichatrabajo
-            INNER JOIN aspirante 
-            ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN cuestionario 
-            ON (cuestionario.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN empresa 
-            ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Numero = 4
-            AND BaremoPTC = '$baremo' ";
-    }
+    $pdo = conectar();
+    $sql = "SELECT *
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante AND YEAR(c.fecha) >= 2021
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = :numero AND c.BaremoPTC = :baremo";
 
+    $params = ['baremo' => $baremo, 'numero' => $forma == 'A' ? 3 : 4];
+    
     if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
+
+    $sql .= " GROUP BY ft.idFichaTrabajo";
     
-    $sql .= " GROUP BY idFichaTrabajo";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    return $stmt->rowCount();
 }
 
 function getByExtralaboral($baremo, $empresa, $area) {
-    $link = conectar();
+    $pdo = conectar();
     $sql = "SELECT *
-            FROM
-            fichatrabajo
-            INNER JOIN aspirante 
-            ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN cuestionario 
-            ON (cuestionario.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN empresa 
-            ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Numero = 2
-            AND BaremoPTC = '$baremo' ";
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante AND YEAR(c.fecha) >= 2021
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = 2 AND c.BaremoPTC = :baremo";
+
+    $params = ['baremo' => $baremo];
 
     if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
-    
-    $sql .= " GROUP BY idFichaTrabajo";
 
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $sql .= " GROUP BY ft.idFichaTrabajo";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    
+    return $stmt->rowCount();
 }
 
+
 function getByEstres($baremo, $empresa, $area) {
-    $link = conectar();
+    $pdo = conectar();
     $sql = "SELECT *
-            FROM
-            fichatrabajo
-            INNER JOIN aspirante 
-            ON (fichatrabajo.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN cuestionario 
-            ON (cuestionario.Aspirante_idAspirante = aspirante.idAspirante)
-            INNER JOIN empresa 
-            ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-            WHERE Numero = 1
-            AND BaremoPTC = '$baremo' ";
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante AND YEAR(c.fecha) >= 2021
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = 1
+            AND c.BaremoPTC = :baremo";
+
+    $params = ['baremo' => $baremo];
 
     if ($empresa != 'all') {
-        $sql .= " AND idEmpresa = $empresa";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND Area_idArea = $area";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
     
-    $sql .= " GROUP BY idFichaTrabajo";
+    $sql .= " GROUP BY ft.idFichaTrabajo";
 
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->rowCount();
 }
 
 function setColorDim($valor, $i, $forma) {
@@ -394,29 +236,50 @@ function setColorDimension($array, $cantidad) {
         return '<td class="level4">A</td>';
     } else if ($result == "Riesgo muy alto") {
         return '<td class="level5">MA</td>';
+    }else{
+        return $result;
     }
 }
 
-function calculateDim($array, $cantidad){
-    $cNo = 0;
-    $cBajo = 0;
-    $cMedio = 0;
-    $cAlto = 0;
-    $cMAlto = 0;
+function setColorDominio($array, $cantidad) {
 
-    foreach ($array as $d) {
-        if ($d=='Sin riesgo o riesgo despreciable') {
-            $cNo++;
-        }elseif ($d == 'Riesgo bajo') {
-            $cBajo++;
-        }elseif ($d == 'Riesgo medio') {
-            $cMedio++;
-        }elseif ($d == 'Riesgo alto') {
-            $cAlto++;
-        }elseif ($d == 'Riesgo muy alto') {
-           $cMAlto++;
-        }
+    $result = calculateDom($array, $cantidad);
+
+    if ($result == "Sin riesgo o riesgo despreciable") {
+        return '<td class="level1">MB</td>';
+    } else if ($result == "Riesgo bajo") {
+        return '<td class="level2">B</td>';
+    } else if ($result == "Riesgo medio") {
+        return '<td class="level3">M</td>';
+    } else if ($result == "Riesgo alto") {
+        return '<td class="level4">A</td>';
+    } else if ($result == "Riesgo muy alto") {
+        return '<td class="level5">MA</td>';
     }
+}
+
+function calculateDim($array, $cantidad, $test=0){
+    $array_count = array_count_values($array);
+    if ($test==1) {
+        var_dump($array);
+        echo "Impreso";
+    }
+    $cNo = $array_count['Sin riesgo o riesgo despreciable'];
+    if ($cNo == '') 
+        $cNo = 0;
+    $cBajo = $array_count['Riesgo bajo'];
+    if ($cBajo == '') 
+        $cBajo = 0;
+    $cMedio = $array_count['Riesgo medio'];
+    if ($cMedio == '') 
+        $cMedio = 0;
+    $cAlto = $array_count['Riesgo alto'];
+    if ($cAlto == '') 
+        $cAlto = 0;
+    $cMAlto = $array_count['Riesgo muy alto'];
+    if ($cMAlto == '') 
+        $cMAlto = 0;
+    
 
     if ($cNo == $cantidad)
        return 'Sin riesgo o riesgo despreciable';
@@ -434,19 +297,83 @@ function calculateDim($array, $cantidad){
        return 'Riesgo muy alto';
 
 
-    $rango1 = (($cNo+$cBajo)*100)/$cantidad;
-    $rango2 = (($cMedio+$cAlto+$cMAlto)*100)/$cantidad;
+ $rango1 = (($cNo+$cBajo)*100)/$cantidad;
+ $rango2 = (($cMedio+$cAlto+$cMAlto)*100)/$cantidad;
+
+if ($rango1<=100 && $rango1>=81) {
+    return 'Sin riesgo o riesgo despreciable';
+}elseif ($rango1<=80 && $rango1>=50) {
+    return 'Riesgo bajo';
+}elseif ($rango2<=60 && $rango2>=51) {
+    return 'Riesgo medio';
+}elseif ($rango2<=80 && $rango2>=61) {
+    return 'Riesgo alto';
+}elseif ($rango2<=100 && $rango2>=81) {
+    return 'Riesgo muy alto';
+}else{
+    return 'Riesgo medio';
+}
+
+}
+
+function calculateDom($array, $cantidad){
+    $array_count = array_count_values($array);
+
+    $cNo = $array_count['Sin riesgo o riesgo despreciable'];
+    if ($cNo == '') 
+        $cNo = 0;
+    $cBajo = $array_count['Riesgo bajo'];
+    if ($cBajo == '') 
+        $cBajo = 0;
+    $cMedio = $array_count['Riesgo medio'];
+    if ($cMedio == '') 
+        $cMedio = 0;
+    $cAlto = $array_count['Riesgo alto'];
+    if ($cAlto == '') 
+        $cAlto = 0;
+    $cMAlto = $array_count['Riesgo muy alto'];
+    if ($cMAlto == '') 
+        $cMAlto = 0;
+
+    //return $cNo.' - '.$cBajo.' - '.$cMedio.' - '.$cAlto.' - '.$cMAlto;
+
+ if ($cNo == $cantidad)
+     return 'Sin riesgo o riesgo despreciable';
+
+ if ($cBajo == $cantidad)
+     return 'Riesgo bajo';
+
+ if ($cMedio == $cantidad)
+     return 'Riesgo medio';
+
+ if ($cAlto == $cantidad)
+     return 'Riesgo alto';
+
+ if ($cMAlto == $cantidad)
+     return 'Riesgo muy alto';
 
 
-    if ($rango1<100 && $rango1>49) {
-        return 'Riesgo bajo';
-    }elseif ($rango2<70 && $rango2>=49) {
-       return 'Riesgo medio';
-    }elseif ($rango2<99 && $rango2>=70) {
-       return 'Riesgo alto';
-    }else{
-       return 'Riesgo bajo';
-    }
+ $rango1 = (($cNo+$cBajo)*100)/$cantidad;
+ $rango2 = (($cMedio+$cAlto+$cMAlto)*100)/$cantidad;
+
+if ($rango1<=100 && $rango1>=81) {
+    return 'Sin riesgo o riesgo despreciable';
+}
+if ($rango1<=80 && $rango1>50) {
+ return 'Riesgo bajo';
+}
+if ($rango2<=60 && $rango2>=51) {
+ return 'Riesgo medio';
+}
+if ($rango2<=80 && $rango2>=61) {
+ return 'Riesgo alto';
+}
+if ($rango2<=100 && $rango2>=81) {
+    return 'Riesgo muy alto';
+}
+
+return 'Riesgo medio';
+
 }
 
 function setColorExtraTotal($valor) {
@@ -486,82 +413,98 @@ function setColorDom($valor, $i, $forma) {
     }
 }
 
-function getCuestiorioRealizado($user, $c) {
-    $link = conectar();
-
+function getCuestionarioRealizado($user, $c) {
+    $pdo = conectar();
+    $date = date('Y');
     $idasp = getIDByUser($user);
 
-    $sql = "SELECT
-            numero
+    $sql = "SELECT numero
             FROM cuestionario
-            WHERE Aspirante_idAspirante = $idasp"
-            . " AND numero = $c";
+            WHERE Aspirante_idAspirante = :idasp
+            AND numero = :c
+            AND fecha LIKE :date";
 
-    $result = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        'idasp' => $idasp,
+        'c' => $c,
+        'date' => "%$date%"
+    ]);
 
-    if (mysql_num_rows($result) > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return $stmt->rowCount() > 0;
 }
 
-function getForma($user, $c) {
-    $link = conectar();
+function getEmpresaUsuario() {
+    $pdo = conectar();
 
+    $sql = "SELECT e.idEmpresa
+            FROM empresa AS e
+            INNER JOIN aspirante AS a
+            ON a.Empresa_idEmpresa = e.idEmpresa
+            WHERE a.Cedula = :usuario
+            ORDER BY a.idAspirante DESC
+            LIMIT 1";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['usuario' => $_SESSION['usuario']]);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function getForma($user, $forma) {
+    $pdo = conectar();
     $idasp = getIDByUser($user);
 
-    $sql = "SELECT
-            Forma
+    $sql = "SELECT Forma
             FROM aspirante
-            WHERE idAspirante = $idasp"
-            . " AND Forma = $c";
+            WHERE idAspirante = :idasp
+            AND Forma = :forma
+            ORDER BY idAspirante DESC";
 
-    $result = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        'idasp' => $idasp,
+        'forma' => $forma
+    ]);
 
-    if (mysql_num_rows($result) > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return $stmt->rowCount() > 0;
 }
 
-function getCuestiorioRealizadoString() {
-    $link = conectar();
+function getCuestionarioRealizadoString() {
+    $pdo = conectar();
 
-    $sql = "SELECT
-            numero
+    $sql = "SELECT numero
             FROM cuestionario
-            WHERE Aspirante_idAspirante = {$_SESSION['id']}";
+            WHERE Aspirante_idAspirante = :id";
 
-    $result = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => $_SESSION['id']]);
 
-    $return = array();
-
-    while ($fila = mysql_fetch_array($result, mysql_NUM)) {
-                array_push($return, $fila[0]);
+    $return = [];
+    while ($fila = $stmt->fetch(PDO::FETCH_NUM)) {
+        $return[] = $fila[0];
     }
 
     return $return;
 }
 
 function validarFicha($user) {
-    $link = conectar();
+    $pdo = conectar();
 
-    $idasp = getIDByUser($user);
+    $sql = "SELECT *
+            FROM fichapersonal AS f
+            INNER JOIN aspirante AS a
+            ON f.Aspirante_idAspirante = a.idAspirante
+            WHERE a.Cedula = :user
+            AND a.Empresa_idEmpresa = :idEmpresa";
 
-    $sql = "SELECT
-            *
-            FROM fichapersonal
-            WHERE Aspirante_idAspirante = $idasp";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        'user' => $user,
+        'idEmpresa' => $_SESSION['idEmpresa']
+    ]);
 
-    $result = mysql_query($sql, $link);
-
-    if (mysql_num_rows($result) > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return $stmt->rowCount() > 0;
 }
 
 function transformarForma($puntaje, $factor) {
@@ -836,3 +779,4 @@ function baremosPTCEstresAux($valor) {
         return 'Riesgo muy alto';
     }
 }
+?>

@@ -1,92 +1,88 @@
 <?php
+
 require_once 'funciones.php';
 
-$link = conectar();
+$pdo = conectar();
 
-if(isset($_GET['empresa'])){
-    if($_GET['empresa']=="all"){
-        $sql = "SELECT * FROM aspirante";
-    }else{
-        $sql = 
-        "SELECT a.*, ar.Nombre AS area, ar.idArea AS id_area , ft.idFichaTrabajo
-        FROM aspirante a
-        LEFT JOIN fichatrabajo ft
-        ON ft.Aspirante_idAspirante = a.idAspirante
-        LEFT JOIN area ar
-        ON ar.idArea = ft.Area_idArea
-        WHERE a.Empresa_idEmpresa = {$_GET['empresa']} 
-        AND ar.Empresa_idEmpresa = {$_GET['empresa']} 
-        ORDER BY a.idAspirante DESC";
+try {
+    $empresa = $_GET['empresa'];
+    if (isset($_GET['empresa'])) {
+        if ($_GET['empresa'] === "all") {
+            $sql = "SELECT * FROM aspirante";
+        } else {
+            $sql = "SELECT a.*, ar.Nombre AS area, ar.idArea AS id_area, ft.idFichaTrabajo
+                    FROM aspirante a
+                    LEFT JOIN fichatrabajo ft ON ft.Aspirante_idAspirante = a.idAspirante
+                    LEFT JOIN area ar ON ar.idArea = ft.Area_idArea
+                    WHERE a.Empresa_idEmpresa = $empresa
+                    ORDER BY a.idAspirante DESC";
+        }
+    } else {
+        $sql = "SELECT * FROM aspirante WHERE Empresa_idEmpresa = 1 ORDER BY idAspirante DESC";
     }
-}else{
-    $sql = "SELECT * FROM aspirante where Empresa_idEmpresa = 1 ORDER BY idAspirante DESC";
-}
 
-$query = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $aspirantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$sql_areas = "SELECT * FROM area
-             WHERE Empresa_idEmpresa = {$_GET['empresa']} ";
-
-$query_areas = mysql_query($sql_areas, $link);
-
-$areas = array();
-while ($row = mysql_fetch_assoc($query_areas)){
-    array_push($areas, $row);
-}
-
-
-echo '<table id="tabla" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Cedula</th>
-                                                    <th>Nombre</th>
-                                                    <th>Apellido 1</th>
-                                                    <th>Apellido 2</th>
-                                                    <th>Email</th>
-                                                    <th>Área</th>
-                                                    <th>Forma</th>
-                                                    <th style="width: 15%"></th>
-                                                </tr>
-                                            </thead>';
-
-while ($line = mysql_fetch_assoc($query)) {
-    echo '<tr>';
-    echo "<td>" . $line['idAspirante'] . "</td>";
-    echo "<td>" . $line['Cedula'] . "</td>";
-    echo "<td>" . $line['Nombre'] . "</td>";
-    echo "<td>" . $line['Apellido1'] . "</td>";
-    echo "<td>" . $line['Apellido2'] . "</td>";
-    echo "<td>" . $line['Email'] . "</td>";
-    echo "<td>";
-    ?>
-    <select id="asp_<?=$line['idAspirante']?>" onchange="change_area(<?=$line['idAspirante']?>, <?=$line['idFichaTrabajo']?>)">
-        <?php  foreach($areas AS $area){
-            ?>
-            <option value="<?=$area['idArea']?>" <?=($line['id_area'] == $area['idArea'] ? 'selected' : '')?>><?=$area['Nombre']?></option>
-            <?php
-            } ?>
-    </select>
-    <?php
-    echo "</td>";
-    if($line['Forma']==1){
-        echo "<td>Forma A</td>";
-    }else if($line['Forma']==2){
-        echo "<td>Forma B</td>";
-    }else{
-        echo "<td>-</td>";
+    $sql_areas = "SELECT * FROM area WHERE Empresa_idEmpresa = :empresa";
+    $stmt_areas = $pdo->prepare($sql_areas);
+    if (isset($_GET['empresa']) && $_GET['empresa'] !== "all") {
+        $stmt_areas->bindParam(':empresa', $_GET['empresa'], PDO::PARAM_INT);
+    } else {
+        // Fallback for 'all' or no 'empresa' parameter
+        $stmt_areas->bindValue(':empresa', 1, PDO::PARAM_INT);
     }
-    echo "<td>";
-    echo '<a data-toggle="tooltip" title="Ver" href="javascript: verAspirante(' . $line["idAspirante"] . ')" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>';
-    echo '<a data-toggle="tooltip" title="Editar" href="#" onclick="editarAspirante(' . $line["idAspirante"] . ')" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>';
-    echo '<a data-toggle="tooltip" title="Eliminar" href="crudAspirante/eliminarAspirante.php?idAspirante=' . $line["idAspirante"] . '" '
-    . 'class="btn btn-danger btn-sm"'
-    . "onclick='return confirm(\"Seguro que desea eliminar este Aspirante?\")';'><span class='glyphicon glyphicon-minus'></span></a>";
-    echo "</td>";
+    $stmt_areas->execute();
+    $areas = $stmt_areas->fetchAll(PDO::FETCH_ASSOC);
 
-    echo "</tr>";
+    echo '<table id="tabla" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cedula</th>
+                    <th>Nombre</th>
+                    <th>Apellido 1</th>
+                    <th>Apellido 2</th>
+                    <th>Email</th>
+                    <th>Área</th>
+                    <th>Forma</th>
+                    <th style="width: 15%"></th>
+                </tr>
+            </thead>';
+
+    foreach ($aspirantes as $line) {
+        echo '<tr>';
+        echo "<td>" . htmlspecialchars($line['idAspirante'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>" . htmlspecialchars($line['Cedula'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>" . htmlspecialchars($line['Nombre'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>" . htmlspecialchars($line['Apellido1'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>" . htmlspecialchars($line['Apellido2'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>" . htmlspecialchars($line['Email'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>";
+        ?>
+        <select id="asp_<?= htmlspecialchars($line['idAspirante'], ENT_QUOTES, 'UTF-8') ?>" onchange="change_area(<?= htmlspecialchars($line['idAspirante'], ENT_QUOTES, 'UTF-8') ?>, <?= htmlspecialchars($line['idFichaTrabajo'], ENT_QUOTES, 'UTF-8') ?>)">
+            <?php foreach ($areas as $area) { ?>
+                <option value="<?= htmlspecialchars($area['idArea'], ENT_QUOTES, 'UTF-8') ?>" <?= ($line['id_area'] == $area['idArea'] ? 'selected' : '') ?>><?= htmlspecialchars($area['Nombre'], ENT_QUOTES, 'UTF-8') ?></option>
+            <?php } ?>
+        </select>
+        <?php
+        echo "</td>";
+        echo "<td>" . ($line['Forma'] == 1 ? "Forma A" : ($line['Forma'] == 2 ? "Forma B" : "-")) . "</td>";
+        echo "<td>";
+        echo '<a data-toggle="tooltip" title="Ver" href="javascript: verAspirante(' . htmlspecialchars($line["idAspirante"], ENT_QUOTES, 'UTF-8') . ')" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>';
+        echo '<a data-toggle="tooltip" title="Editar" href="#" onclick="editarAspirante(' . htmlspecialchars($line["idAspirante"], ENT_QUOTES, 'UTF-8') . ')" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>';
+        echo '<a data-toggle="tooltip" title="Eliminar" href="crudAspirante/eliminarAspirante.php?idAspirante=' . htmlspecialchars($line["idAspirante"], ENT_QUOTES, 'UTF-8') . '" '
+            . 'class="btn btn-danger btn-sm"'
+            . "onclick='return confirm(\"Seguro que desea eliminar este Aspirante?\")';'><span class='glyphicon glyphicon-minus'></span></a>";
+        echo "</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>";
+
+} catch (PDOException $e) {
+    echo "<center><h1>Error: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</h1></center>";
 }
 
-echo "</table>";
-
-mysql_close($link);
+$pdo = null;

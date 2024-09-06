@@ -1,47 +1,83 @@
 <?php
-session_start();
 
-require "funciones.php";
+require './funciones.php';
 
+$link = conectar();
 
-    $link = conectar();
+try {
+    // Seleccionar aspirantes
+    $sql = "SELECT *
+            FROM aspirante
+            INNER JOIN cuestionario 
+                ON aspirante.idAspirante = cuestionario.Aspirante_idAspirante
+            WHERE cuestionario.Numero = :numero
+            AND Empresa_idEmpresa = :empresaId";
+            
+    $stmt = $link->prepare($sql);
+    $stmt->execute([
+        ':numero' => 3,
+        ':empresaId' => 1
+    ]);
     
-    $idUser = getUsuarioByUser($_SESSION['usuario']);
+    $aspirantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $cantidad = count($aspirantes);
+    echo "cantidad: " . $cantidad . "<br>";
     
-    $sql = "INSERT INTO cuestionario
-            (Numero,
-             Usuario_idUsuario)
-            VALUES ('{$_POST['numero']}',
-                    '$idUser');";
+    $promedioDom = array_fill(0, 4, 0);
+    $promedioDim = array_fill(0, 18, 0);
 
-    mysql_query($sql, $link);
+    foreach ($aspirantes as $line) {
+        // Obtener puntajes de dominio
+        $sql2 = "SELECT dominio.Puntaje
+                 FROM dominio
+                 INNER JOIN cuestionario
+                     ON dominio.Cuestionario_idCuestionario = cuestionario.idCuestionario
+                 WHERE cuestionario.Aspirante_idAspirante = :idAspirante";
+        
+        $stmt2 = $link->prepare($sql2);
+        $stmt2->execute([
+            ':idAspirante' => $line['idAspirante']
+        ]);
+        
+        $puntajeDom = $stmt2->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($puntajeDom as $index => $puntaje) {
+            if ($index < count($promedioDom)) {
+                $promedioDom[$index] += $puntaje;
+            }
+        }
 
-    $id = mysql_insert_id();
-    
-    
-    for ($i = 1; $i < 32; $i++) {
-
-        $sql = "INSERT INTO pregunta
-            (numero,
-             respuesta,
-             Cuestionario_idCuestionario)
-            VALUES (
-                    '$i',
-                    '{$_POST['preg'.$i]}',
-                    '$id');";
-
-                    mysql_query($sql, $link);
+        // Obtener puntajes de dimensión
+        $sql3 = "SELECT dimension.Puntaje
+                 FROM dimension
+                 INNER JOIN cuestionario
+                     ON dimension.Cuestionario_idCuestionario = cuestionario.idCuestionario
+                 WHERE cuestionario.Aspirante_idAspirante = :idAspirante
+                 AND Numero = :numero";
+        
+        $stmt3 = $link->prepare($sql3);
+        $stmt3->execute([
+            ':idAspirante' => $line['idAspirante'],
+            ':numero' => 3
+        ]);
+        
+        $puntajeDim = $stmt3->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($puntajeDim as $index => $puntaje) {
+            if ($index < count($promedioDim)) {
+                $promedioDim[$index] += $puntaje;
+            }
+        }
     }
-    
-    $error = mysql_error($link);
 
-    if ($error == null) {
-        header("Location: pruebas.php?estado=guardado");
-    } else {
-        header("Location: pruebas.php?estado=errordatos");
-        echo "<center>";
-        echo "<h1> " . $error . "</h1>";
-        echo "</center>";
-    }
-    
-    mysql_close($link);
+    // Calcular promedios
+    $promedioDom = array_map(function($sum) use ($cantidad) { return round($sum / $cantidad, 1); }, $promedioDom);
+    $promedioDim = array_map(function($sum) use ($cantidad) { return round($sum / $cantidad, 1); }, $promedioDim);
+
+    // Imprimir promedios (opcional, para verificar los resultados)
+    echo "Promedio Dominio: " . implode(", ", $promedioDom) . "<br>";
+    echo "Promedio Dimensión: " . implode(", ", $promedioDim) . "<br>";
+
+} catch (PDOException $e) {
+    echo "<center><h1>" . $e->getMessage() . "</h1></center>";
+}
+
+?>

@@ -4,21 +4,20 @@ require "../funciones.php";
 session_start();
 $link = conectar();
 
-$sql = 
-	"UPDATE `fichatrabajo` 
-	SET `Area_idArea` = '{$_POST['idArea']}'
-	WHERE `Aspirante_idAspirante` = '{$_POST['idAspirante']}'
-	AND idFichaTrabajo = '{$_POST['idFichaTrabajo']}'";
+// Interpolación directa en la consulta SQL
+$idArea = intval($_POST['idArea']);
+$idAspirante = intval($_POST['idAspirante']);
+$idFichaTrabajo = intval($_POST['idFichaTrabajo']);
 
-mysql_query($sql, $link);
+$sql = "UPDATE fichatrabajo 
+        SET Area_idArea = $idArea
+        WHERE Aspirante_idAspirante = $idAspirante 
+        AND idFichaTrabajo = $idFichaTrabajo";
 
-$error = mysql_error($link);
-
-if ($error == null) {
+if ($link->query($sql)) {
     echo "ok";
 } else {
     echo "error";
 }
-mysql_close($link);
 
 ?>

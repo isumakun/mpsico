@@ -1,7 +1,7 @@
-<?php $title = ''; ?>
-<?php require './header.php'; ?>  
-
-    <?php if (validarAdmin()) {
+<?php
+$title = ''; 
+require './header.php'; 
+if (validarAdmin()) {
         ?>
 
         <div class="row">

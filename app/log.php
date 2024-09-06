@@ -2,78 +2,89 @@
 
 require 'funciones.php';
 error_reporting(E_ALL);
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 session_start();
-$link = conectar();
-if ((isset($_POST["usuario"])) && (isset($_POST["password"]))) {
+$pdo = conectar();
 
+if (isset($_POST["usuario"]) && isset($_POST["password"])) {
 
-    $usuarios = mysql_query("SELECT * from usuario where usuario='{$_POST['usuario']}'  ORDER BY idUsuario DESC LIMIT 1", $link);
-    $nusuarios = mysql_num_rows($usuarios);
-
+    // Consulta para verificar si el usuario existe
+    $stmt = $pdo->prepare("SELECT * FROM usuario WHERE usuario = :usuario ORDER BY idUsuario DESC LIMIT 1");
+    $stmt->execute(['usuario' => $_POST['usuario']]);
+    $nusuarios = $stmt->rowCount();
 
     if ($nusuarios != 0) {
+        /*
+            Tabla: usuario
+            Columna	Tipo	Comentario
+            idUsuario	int Incremento automático	
+            usuario	varchar(256)	
+            password	varchar(256)	
+            tipo	int	
+        */
+        
+        // Consulta si el usuario y la contraseña en Sh1 son correctos
+        $contra = sha1($_POST["password"]);
 
-        $sql1 = "SELECT tipo from usuario where password='{$_POST["password"]}' 
-                                                && usuario='{$_POST["usuario"]}'
-                                                ORDER BY idUsuario DESC LIMIT 1";
-        $tipouser = mysql_query($sql1, $link);
+        $smtp = $pdo->prepare("SELECT * FROM usuario WHERE password = :password AND usuario = :usuario ORDER BY idUsuario DESC LIMIT 1");
+        $smtp->bindParam(':password', $contra, PDO::PARAM_STR);
+        $smtp->bindParam(':usuario', $_POST["usuario"], PDO::PARAM_STR);
+        $smtp->execute();
+        $logged = $smtp->fetch(PDO::FETCH_ASSOC);
 
-        $resultContra = mysql_query("SELECT password from usuario where usuario='{$_POST["usuario"]}'
-            ORDER BY idUsuario DESC LIMIT 1", $link);
-        $contra = mysql_result($resultContra, 0);
+        if (!empty($logged)) {
+            // Consulta para obtener los datos del usuario
+            $stmtDatos = $pdo->prepare("SELECT u.usuario, a.forma, a.cedula, a.idAspirante 
+                                        FROM usuario AS u
+                                        INNER JOIN aspirante AS a ON a.Usuario_idUsuario = u.idUsuario
+                                        WHERE usuario = :usuario
+                                        ORDER BY u.idUsuario DESC LIMIT 1");
+            $stmtDatos->bindParam(':usuario', $_POST["usuario"], PDO::PARAM_STR);
+            $stmtDatos->execute();
+            //check the sql with the parameters replaced
+            $query = $stmtDatos->queryString;
+            $usuarioData = $stmtDatos->fetch(PDO::FETCH_ASSOC);
 
-        $sql2 = "SELECT u.usuario, a.forma, a.cedula, a.idAspirante FROM usuario AS u
-                 INNER JOIN aspirante AS a
-                 ON a.Usuario_idUsuario = u.idUsuario
-                 WHERE password='{$_POST["password"]}' 
-                 AND usuario='{$_POST["usuario"]}'
-                 ORDER BY u.idUsuario DESC LIMIT 1";
+            if (validarFicha($usuarioData['usuario'])) {
+                $idAsp = getIDByUser($usuarioData['usuario']);
+                $stmtCargo = $pdo->prepare("SELECT tipocargo FROM fichatrabajo WHERE Aspirante_idAspirante = :idAsp");
+                $stmtCargo->execute(['idAsp' => $idAsp]);
+                $tipocargo = $stmtCargo->fetchColumn();
 
-        $result = mysql_query($sql2, $link);
-        $usuario = mysql_result($result, 0, 0);
-
-        if (validarFicha($usuario)) {
-            $idAsp = getIDByUser($usuario);
-            $sqlcargo = "SELECT tipocargo from fichatrabajo where Aspirante_idAspirante= $idAsp";
-            $result = mysql_query($sql2, $link);
-            $tipocargo = mysql_result($result, 0);
-            if (strpos($tipocargo, 'Jefatura') !== false) {
-                $_SESSION['cargo'] = 'jefe';
-            }else{
-                 $_SESSION['cargo'] = 'aux';
+                if (strpos($tipocargo, 'Jefatura') !== false) {
+                    $_SESSION['cargo'] = 'jefe';
+                } else {
+                    $_SESSION['cargo'] = 'aux';
+                }
             }
-        }
 
-        if ($contra == $_POST["password"]) {
-
-            $_SESSION['forma'] = mysql_result($result, 0, 1);
-            $_SESSION['cedula'] = mysql_result($result, 0, 2);
-            $_SESSION['id'] = mysql_result($result, 0, 3);
-            $_SESSION['tipo'] = mysql_result($tipouser, 0, 0);
-            $_SESSION['usuario'] = $_POST["usuario"];
-            $_SESSION['password'] = $contra;
-            $_SESSION['autenticado'] = "autenticado";
+            $_SESSION['forma']          = $usuarioData['forma'];
+            $_SESSION['cedula']         = $usuarioData['cedula'];
+            $_SESSION['id']             = $usuarioData['idAspirante'];
+            $_SESSION['tipo']           = $logged['tipo'];
+            $_SESSION['usuario']        = $_POST["usuario"];
+            $_SESSION['password']       = $contra;
+            $_SESSION['autenticado']    = "autenticado";
             $_SESSION['login'] = true;
 
             if ($_SESSION['tipo'] == 1) {
-                header("Location: index.php");
+                header("Location: index");
             } else {
-                $result = getEmpresaUsuario();
+                $empresaUsuario = getEmpresaUsuario();
+                $_SESSION['idEmpresa'] = $empresaUsuario['idEmpresa'];
 
-                $_SESSION['idEmpresa'] = $result['idEmpresa'];
-
-                if (validarFicha($usuario)!='') {
-                    header("Location: pruebas.php");
+                if (validarFicha($usuarioData['usuario'])) {
+                    header("Location: pruebas");
                 } else {
-                    header("Location: fichaTecnica.php");
+                    header("Location: fichaTecnica");
                 }
             }
         } else {
-            header("Location: login.php?estado=contra");
+            header("Location: login?estado=contra");
         }
     } else {
-        header("Location: login.php?estado=nousuario");
+        header("Location: login?estado=nousuario");
     }
 }
-mysql_close($link);
+$pdo = null;
+?>

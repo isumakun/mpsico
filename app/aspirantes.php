@@ -108,8 +108,13 @@
 
 <script type="text/javascript">
     var company='';
-    var current_company = '<?=$_GET['empresa']?>'
+    var current_company = '<?=isset($_GET['empresa'] ) ? $_GET['empresa'] : ""?>';
 
+    $(document).ready(function(){
+        if(current_company==''){
+            location.href = 'aspirantes.php?empresa=1';
+        }
+    })
     function change_area(idAspirante, idFichaTrabajo){
         console.log('change');
         var idArea = $("#asp_"+idAspirante).val();

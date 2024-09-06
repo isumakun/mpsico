@@ -1,27 +1,33 @@
 <?php
 
 require_once 'funciones.php';
-$link = conectar();
+$pdo = conectar();
 
-$sql = "SELECT
-    area.idArea
-    , area.Nombre
-FROM
-    area
-    INNER JOIN empresa 
-        ON (area.Empresa_idEmpresa = empresa.idEmpresa)
-    INNER JOIN aspirante 
-        ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa)
-        WHERE aspirante.Cedula = ".$_SESSION['usuario'].""
-        . " GROUP BY idArea";
+try {
+    $sql = "SELECT
+                area.idArea,
+                area.Nombre
+            FROM
+                area
+                INNER JOIN empresa 
+                    ON area.Empresa_idEmpresa = empresa.idEmpresa
+                INNER JOIN aspirante 
+                    ON aspirante.Empresa_idEmpresa = empresa.idEmpresa
+            WHERE aspirante.Cedula = :usuario
+            GROUP BY idArea";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':usuario' => $_SESSION['usuario']]);
 
-$query = mysql_query($sql, $link);
+    $areas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$lista = array();
-$fila = 0;
-$n = 0;
+    foreach ($areas as $line) {
+        echo '<option value="' . htmlspecialchars($line['idArea'], ENT_QUOTES, 'UTF-8') . '">' 
+             . htmlspecialchars($line['Nombre'], ENT_QUOTES, 'UTF-8') . '</option>';
+    }
 
-while ($line = mysql_fetch_array($query)) {
-
-echo '<option value="'.$line['idArea'].'">'.$line['Nombre'].'</option>';
+} catch (PDOException $e) {
+    echo "<center><h1>Error: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</h1></center>";
 }
+
+?>

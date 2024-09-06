@@ -2,18 +2,21 @@
 
 require_once 'entidades/empresa.php';
 require_once 'funciones.php';
-$link = conectar();
 
-$sql = "SELECT * FROM empresa ORDER BY Nombre";
+$pdo = conectar();
 
-$query = mysql_query($sql, $link);
+try {
+    $sql = "SELECT * FROM empresa ORDER BY Nombre";
+    $stmt = $pdo->query($sql);
 
-$lista = array();
-$fila = 0;
-$n = 0;
-
-while ($line = mysql_fetch_array($query)) {
+    $empresas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($empresas as $line) {
         $nombre = mb_convert_encoding($line['Nombre'], "UTF-8", "ASCII");
-        echo '<option value="'.$line['idEmpresa'].'">'.$nombre.'</option>';
-    
+        echo '<option value="' . $line['idEmpresa'] . '">' . $nombre . '</option>';
+    }
+} catch (PDOException $e) {
+    echo "<center><h1>Error: " . $e->getMessage() . "</h1></center>";
 }
+
+$pdo = null;
+?>

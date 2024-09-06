@@ -2,23 +2,22 @@
 
 require './funciones.php';
 
-$link = conectar();
+$pdo = conectar();
 
-$sql = "UPDATE prueba
-SET link = '{$_POST['link']}'
-WHERE idPrueba = '1'";
+try {
+    $sql = "UPDATE prueba SET link = :link WHERE idPrueba = 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['link' => $_POST['link']]);
 
-mysql_query($sql, $link);
-
-    $error = mysql_error($link);
-
-    if ($error == null) {
+    // Verificamos si la consulta fue exitosa
+    if ($stmt->rowCount() > 0) {
         header('Location: configurarPruebas.php');
     } else {
-        //header("Location: ../nuevoAspirante.php?estado=errordatos");
-        echo "<center>";
-        echo "<h1> " . $error . "</h1>";
-        echo "</center>";
+        echo "<center><h1>No se realizaron cambios en la base de datos.</h1></center>";
     }
+} catch (PDOException $e) {
+    echo "<center><h1>Error: " . $e->getMessage() . "</h1></center>";
+}
 
-//
+$pdo = null;
+?>

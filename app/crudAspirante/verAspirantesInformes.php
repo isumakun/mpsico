@@ -2,51 +2,61 @@
 
 require_once 'entidades/aspirante.php';
 require_once 'funciones.php';
-$link = conectar();
 
-$sql = "SELECT
-        aspirante.idAspirante
-        , aspirante.Cedula
-        , empresa.Nombre
-        , empresa.idEmpresa
-        FROM
-        aspirante
-        INNER JOIN empresa 
-        ON (aspirante.Empresa_idEmpresa = empresa.idEmpresa);";
+header('Content-Type: application/json');
 
-$query = mysql_query($sql, $link);
+try {
+    $pdo = conectar();
 
-$lista = array();
-$fila = 0;
-$n = 0;
-
-while ($line = mysql_fetch_array($query)) {
-    echo '<tr>';
-    echo "<td style='text-align: center'>" . $line['idAspirante'] . "</td>";
-    echo "<td style='text-align: center'>" . $line['Cedula'] . "</td>";
-    echo "<td style='text-align: center'>" . $line['Nombre'] . "</td>";
-    
-    $sql2 = "SELECT
-            aspirante.idAspirante
-            , aspirante.Cedula
-            , cuestionario.idCuestionario
-            , cuestionario.Numero
+    // Consulta principal
+    $sql = "SELECT
+                aspirante.idAspirante,
+                aspirante.Cedula,
+                empresa.Nombre,
+                empresa.idEmpresa
             FROM
-            cuestionario
-            INNER JOIN aspirante 
-            ON (cuestionario.Aspirante_idAspirante = aspirante.idAspirante)
-            WHERE aspirante.idAspirante =".$line['idAspirante'];
+                aspirante
+            INNER JOIN empresa 
+            ON aspirante.Empresa_idEmpresa = empresa.idEmpresa";
     
-    $query2 = mysql_query($sql2, $link);
+    $stmt = $pdo->query($sql);
     
-    echo "<td style='text-align: center'>";
-    while ($row = mysql_fetch_array($query2)) {
-        echo '<a data-toggle="tooltip" title="Cuestionario '.$row['Numero'].'" href="informeCuestionario.php?usuario='.$row['idAspirante'].'&numero='.$row['Numero'].'&empresa='.$line['idEmpresa'].'" class="btn btn-info btn-sm">'.$row['Numero'].'</a>';
+    $lista = array();
+    
+    while ($line = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $row = array();
+        $row['idAspirante'] = $line['idAspirante'];
+        $row['Cedula'] = $line['Cedula'];
+        $row['Nombre'] = $line['Nombre'];
+        
+        // Consulta secundaria para cuestionarios
+        $sql2 = "SELECT
+                    cuestionario.idCuestionario,
+                    cuestionario.Numero
+                 FROM
+                    cuestionario
+                 WHERE cuestionario.Aspirante_idAspirante = :idAspirante";
+        
+        $stmt2 = $pdo->prepare($sql2);
+        $stmt2->bindParam(':idAspirante', $line['idAspirante'], PDO::PARAM_INT);
+        $stmt2->execute();
+        
+        $cuestionarios = array();
+        while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+            $cuestionarios[] = array(
+                'Numero' => $row2['Numero'],
+                'idCuestionario' => $row2['idCuestionario']
+            );
+        }
+        
+        $row['cuestionarios'] = $cuestionarios;
+        $lista[] = $row;
     }
-    echo "</td>";
 
-    echo "</tr>";
+    echo json_encode($lista, JSON_UNESCAPED_UNICODE);
+
+} catch (PDOException $e) {
+    echo json_encode(array('error' => $e->getMessage()));
 }
 
-$json = json_encode($lista, JSON_UNESCAPED_UNICODE);
-mysql_close($link);
+$pdo = null;

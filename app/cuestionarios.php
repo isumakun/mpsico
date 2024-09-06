@@ -1,7 +1,7 @@
 <?php $title = 'Cuestionarios'; ?>
 <?php
 require './header.php';
-require './funciones.php';
+include './funciones.php';
 ?>  
 <link href="css/cuestionario.css" rel="stylesheet" media="all">
 <style>
@@ -21,7 +21,7 @@ require './funciones.php';
         <ul class="nav nav-tabs">
             <li><a 
                 <?php
-                if (getCuestiorioRealizado($_SESSION['usuario'], 1)) {
+                if (getCuestionarioRealizado($_SESSION['usuario'], 1)) {
                     echo 'href="#" id="1" onclick="return realizado();"';
                 } else {
                     echo 'data-toggle="tab" id="f1" href="#c1"';
@@ -29,7 +29,7 @@ require './funciones.php';
                 ?>>Cuestionario 1</a></li>
                 <li><a 
                     <?php
-                    if (getCuestiorioRealizado($_SESSION['usuario'], 2)) {
+                    if (getCuestionarioRealizado($_SESSION['usuario'], 2)) {
                         echo 'href="#" onclick="return realizado();"';
                     } else {
                         echo 'data-toggle="tab" id="f2" href="#c2"';
@@ -38,7 +38,7 @@ require './funciones.php';
                     <?php if(getForma($_SESSION['usuario'], 1)){?>
                     <li><a 
                         <?php
-                        if (getCuestiorioRealizado($_SESSION['usuario'], 3)) {
+                        if (getCuestionarioRealizado($_SESSION['usuario'], 3)) {
                             echo 'href="#" onclick="return realizado();"';
                         } else {
                             echo 'data-toggle="tab" id="f3" href="#c3"';
@@ -47,7 +47,7 @@ require './funciones.php';
                         <?php }else if(getForma($_SESSION['usuario'], 2)){?>
                         <li><a 
                             <?php
-                            if (getCuestiorioRealizado($_SESSION['usuario'], 4)) {
+                            if (getCuestionarioRealizado($_SESSION['usuario'], 4)) {
                                 echo 'href="#" onclick="return realizado();"';
                             } else {
                                 echo 'data-toggle="tab" id="f4" href="#c4"';
@@ -113,7 +113,7 @@ require './funciones.php';
         <!-- end site wraper --> 
         <script type="text/javascript">
             $(document).ready(function(){
-                var cuestionarios = <?= json_encode(getCuestiorioRealizadoString()) ?>;
+                var cuestionarios = <?= json_encode(getCuestionarioRealizadoString()) ?>;
                 //console.log(cuestionarios);
                 
                 var param1var = getQueryVariable("c");                  

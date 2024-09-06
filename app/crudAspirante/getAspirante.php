@@ -3,8 +3,7 @@ require_once '../funciones.php';
 
 header('Content-Type: application/json');
 
-class aspirante {
-
+class Aspirante {
     public $idAspirante;
     public $cedula;
     public $nombre;
@@ -16,32 +15,37 @@ class aspirante {
     public $idEmpresa;
 }
 
-$link = conectar();
+try {
+    $pdo = conectar();
 
-$sql = "SELECT * FROM aspirante where idAspirante = {$_GET['id']}";
+    $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-$query = mysql_query($sql, $link);
+    $sql = "SELECT * FROM aspirante WHERE idAspirante = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
-$lista = array();
-$fila = 0;
-$n = 0;
+    $lista = array();
 
-while ($line = mysql_fetch_array($query)) {
-    $a = new aspirante();
-    $a->idAspirante = $line['idAspirante'];
-    $a->cedula = $line['Cedula'];
-    $a->nombre = $line['Nombre'];
-    $a->apellido1 = $line['Apellido1'];
-    $a->apellido2 = $line['Apellido2'];
-    $a->telefono = $line['Telefono'];
-    $a->direccion = $line['Direccion'];
-    $a->email = $line['Email'];
-    $a->idEmpresa = $line['Empresa_idEmpresa'];
+    while ($line = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $a = new Aspirante();
+        $a->idAspirante = $line['idAspirante'];
+        $a->cedula = $line['Cedula'];
+        $a->nombre = $line['Nombre'];
+        $a->apellido1 = $line['Apellido1'];
+        $a->apellido2 = $line['Apellido2'];
+        $a->telefono = $line['Telefono'];
+        $a->direccion = $line['Direccion'];
+        $a->email = $line['Email'];
+        $a->idEmpresa = $line['Empresa_idEmpresa'];
 
-    $lista[$fila] = $a;
-    $fila++;
+        $lista[] = $a;
+    }
+
+    echo json_encode($lista, JSON_UNESCAPED_UNICODE);
+
+} catch (PDOException $e) {
+    echo json_encode(array('error' => $e->getMessage()));
 }
 
-echo json_encode($lista, JSON_UNESCAPED_UNICODE);
-
-mysql_close($link);
+$pdo = null;

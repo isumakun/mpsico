@@ -12,8 +12,8 @@ function validarAuth() {
         }
     }else{
         header("Location: login.php");
-            //ademas salgo de este script 
-            exit();
+        //ademas salgo de este script 
+        exit();
     }
 }
 

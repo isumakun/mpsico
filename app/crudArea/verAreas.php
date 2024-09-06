@@ -2,57 +2,65 @@
 
 require_once 'entidades/area.php';
 require_once 'funciones.php';
-$link = conectar();
 
-$sql = "SELECT
-    area.idArea
-    , area.Nombre
-    , area.Empresa_idEmpresa AS idEmpresa
-FROM
-    area
-Group By idArea";
+$pdo = conectar();
 
-$query = mysql_query($sql, $link);
+try {
+    $lista = [];
+    // Consulta para obtener las áreas
+    $sql = "SELECT
+                area.idArea,
+                area.Nombre,
+                area.Empresa_idEmpresa AS idEmpresa
+            FROM area
+            GROUP BY idArea";
 
-$lista = array();
-$fila = 0;
-$n = 0;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $areas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-while ($line = mysql_fetch_array($query)) {
-    echo '<tr>';
-    echo "<td>" . $line['idArea'] . "</td>";
-    echo "<td>" . $line['Nombre'] . "</td>";
-    
+    foreach ($areas as $line) {
+        echo '<tr>';
+        echo "<td>" . htmlspecialchars($line['idArea'], ENT_QUOTES, 'UTF-8') . "</td>";
+        echo "<td>" . htmlspecialchars($line['Nombre'], ENT_QUOTES, 'UTF-8') . "</td>";
 
-    $sql2 = "SELECT
-            empresa.Nombre
-        FROM
-            empresa
-        Where idEmpresa = ".$line['idEmpresa'];
+        // Consulta para obtener el nombre de la empresa
+        $sql2 = "SELECT
+                    empresa.Nombre
+                FROM empresa
+                WHERE idEmpresa = :idEmpresa";
 
-    $query2 = mysql_query($sql2, $link);
-    
-    while ($line2 = mysql_fetch_array($query2)) {
-        echo "<td>" . $line2['Nombre'] . "</td>";
+        $stmt2 = $pdo->prepare($sql2);
+        $stmt2->bindParam(':idEmpresa', $line['idEmpresa'], PDO::PARAM_INT);
+        $stmt2->execute();
+        $empresa = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+        echo "<td>" . htmlspecialchars($empresa['Nombre'], ENT_QUOTES, 'UTF-8') . "</td>";
+
+        echo "<td>";
+        echo '<a data-toggle="tooltip" title="Ver" href="#" onclick="verArea(' . htmlspecialchars($line["idArea"], ENT_QUOTES, 'UTF-8') . ')" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>';
+        echo '<a data-toggle="tooltip" title="Editar" href="#" onclick="editarArea(' . htmlspecialchars($line["idArea"], ENT_QUOTES, 'UTF-8') . ')" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>';
+        echo '<a data-toggle="tooltip" title="Eliminar" href="crudArea/eliminarArea.php?idArea=' . htmlspecialchars($line["idArea"], ENT_QUOTES, 'UTF-8') . '" '
+            . 'class="btn btn-danger btn-sm"'
+            . "onclick='return confirm(\"Seguro que desea eliminar esta Area?\")';'><span class='glyphicon glyphicon-minus'></span></a>";
+        echo "</td>";
+
+        echo "</tr>";
+
+        // Crear objeto de área y agregar a la lista
+        $a = new area();
+        $a->idArea = $line['idArea'];
+        $a->nombre = $line['Nombre'];
+        $a->idEmpresa = $line['idEmpresa'];
+
+        $lista[] = $a;
     }
 
-    echo "<td>";
-    echo '<a data-toggle="tooltip" title="Ver" href="#" onclick="verArea(' . $line["idArea"] . ')" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>';
-    echo '<a data-toggle="tooltip" title="Editar" href="#" onclick="editarArea(' . $line["idArea"] . ')" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>';
-    echo '<a data-toggle="tooltip" title="Eliminar" href="crudArea/eliminarArea.php?idArea=' . $line["idArea"] . '" '
-    . 'class="btn btn-danger btn-sm"'
-    . "onclick='return confirm(\"Seguro que desea eliminar esta Area?\")';'><span class='glyphicon glyphicon-minus'></span></a>";
-    echo "</td>";
+    // Codificar lista en formato JSON
+    $json = json_encode($lista, JSON_UNESCAPED_UNICODE);
 
-    echo "</tr>";
-    $a = new area();
-    $a->idArea = $line['idArea'];
-    $a->nombre = $line['Nombre'];
-    $a->idEmpresa = $line['idEmpresa'];
-
-    $lista[$fila] = $a;
-    $fila++;
+} catch (PDOException $e) {
+    echo "<center><h1>Error: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</h1></center>";
 }
 
-$json = json_encode($lista, JSON_UNESCAPED_UNICODE);
-mysql_close($link);
+$pdo = null;

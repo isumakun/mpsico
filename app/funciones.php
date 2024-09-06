@@ -1,276 +1,236 @@
 <?php
-
 function conectar() {
-    $link = mysql_connect("localhost", "u125366151_mpsico", "Mpsico2021") or die("Error al conectar" . mysql_error());
-    mysql_select_db("u125366151_mpsico") or die("No se pudo conectar a Entrevistas");
-    return $link;
+    try {
+        $pdo = new PDO('mysql:host=localhost;dbname=mpsico', 'master', '310.310.');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo;
+    } catch (PDOException $e) {
+        die("Error al conectar: " . $e->getMessage());
+    }
 }
 
 function getLink() {
-    $link = conectar();
-    $sql = "SELECT link from prueba where idPrueba='1'";
-    $result = mysql_query($sql, $link);
-    $r = mysql_result($result, 0);
+    $pdo = conectar();
+    $sql = "SELECT link FROM prueba WHERE idPrueba = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => 1]);
+    $r = $stmt->fetchColumn();
     $r = str_replace("watch?v=", "v/", $r);
     return $r;
 }
 
-function getIDByUser($usuario) {
+function getCuestionarioRealizado($user, $c) {
     $link = conectar();
-    $sql = "SELECT idAspirante from aspirante where Cedula='$usuario' ORDER BY idAspirante DESC LIMIT 1";
-    $result = mysql_query($sql, $link);
-    $idUser = mysql_result($result, 0, 0);
+    
+    try {
+        $date = date('Y');
+        $idasp = getIDByUser($user);
+
+        // Usar placeholders para evitar inyecciones SQL
+        $sql = "SELECT numero FROM cuestionario 
+                WHERE Aspirante_idAspirante = :idasp
+                AND numero = :numero
+                AND fecha LIKE :date";
+                
+        $stmt = $link->prepare($sql);
+        $res = $stmt->execute([
+            ':idasp' => $idasp,
+            ':numero' => $c,
+            ':date' => "%$date%"
+        ]);
+        
+        // Verificar si se obtienen resultados
+        if ($stmt->rowCount() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (PDOException $e) {
+        echo "<center><h1>" . $e->getMessage() . "</h1></center>";
+        return false;
+    }
+}
+
+
+function getIDByUser($usuario) {
+    $pdo = conectar();
+    $sql = "SELECT idAspirante FROM aspirante WHERE Cedula = :cedula ORDER BY idAspirante DESC LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['cedula' => $usuario]);
+    $idUser = $stmt->fetchColumn();
     return $idUser;
 }
 
 function getConsentimiento($usuario) {
-    $link = conectar();
-    $sql = "SELECT consentimiento from usuario where usuario='$usuario' ORDER BY idUsuario DESC LIMIT 1";
-    $result = mysql_query($sql, $link);
-    $r = mysql_result($result, 0, 0);
-    if ($r == 1) {
-        return 'true';
-    } else {
-        return 'false';
-    }
+    $pdo = conectar();
+    $sql = "SELECT consentimiento FROM usuario WHERE usuario = :usuario ORDER BY idUsuario DESC LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['usuario' => $usuario]);
+    $r = $stmt->fetchColumn();
+    return $r == 1 ? 'true' : 'false';
 }
 
 function getNumeroAspirantes($empresa, $area) {
-    $link = conectar();
-    $sql = "SELECT *
-    FROM
-    fichapersonal AS fp
-    INNER JOIN aspirante AS a 
-    ON (fp.Aspirante_idAspirante = a.idAspirante)
-    INNER JOIN fichatrabajo AS ft
-    ON (ft.Aspirante_idAspirante = a.idAspirante)
-    INNER JOIN empresa AS e
-    ON (a.Empresa_idEmpresa = e.idEmpresa)
-    INNER JOIN area AS ar
-    ON (ar.idArea = ft.Area_idArea)";
-    
+    $pdo = conectar();
+    $sql = "SELECT COUNT(DISTINCT ft.idFichaTrabajo)
+            FROM fichapersonal AS fp
+            INNER JOIN aspirante AS a ON fp.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN fichatrabajo AS ft ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE 1=1";
+
+    $params = [];
     if ($empresa != 'all') {
-        $count = 1;
-        foreach ($empresa as $emp) {
-            if ($count==1) {
-                $sql .= " AND (e.idEmpresa = $emp ";
-            }else{
-                $sql .= " OR e.idEmpresa = $emp ";
-            }
-            $count++;
-        }
-        $sql .= ")";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND e.idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND ar.idArea = '$area'";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
 
-    $sql .= " GROUP BY idFichaTrabajo";
-    
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchColumn();
 }
 
 function getEmpresas($empresas) {
-    $link = conectar();
-    $sql = "SELECT *
-    FROM empresa AS e ";
+    $pdo = conectar();
+    $placeholders = implode(',', array_fill(0, count($empresas), '?'));
+    $sql = "SELECT COUNT(*) FROM empresa AS e WHERE e.idEmpresa IN ($placeholders)";
     
-    $count = 1;
-    foreach ($empresas as $emp) {
-        if ($count==1) {
-            $sql .= " AND (e.idEmpresa = $emp ";
-        }else{
-            $sql .= " OR e.idEmpresa = $emp ";
-        }
-        $count++;
-    }
-    $sql .= ")";
-
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($empresas);
+    return $stmt->fetchColumn();
 }
 
 function getFichaTecnica($empresa, $area) {
-    $link = conectar();
+    $pdo = conectar();
     $sql = "SELECT *
-    FROM
-    fichapersonal AS fp
-    INNER JOIN aspirante AS a 
-    ON (fp.Aspirante_idAspirante = a.idAspirante)
-    INNER JOIN fichatrabajo AS ft
-    ON (ft.Aspirante_idAspirante = a.idAspirante)
-    INNER JOIN empresa AS e
-    ON (a.Empresa_idEmpresa = e.idEmpresa)
-    INNER JOIN area AS ar
-    ON (ar.idArea = ft.Area_idArea)
-    INNER JOIN cuestionario AS c
-    ON (c.Aspirante_idAspirante = a.idAspirante)";
+            FROM fichapersonal AS fp
+            INNER JOIN aspirante AS a ON fp.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN fichatrabajo AS ft ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante";
 
-     if ($empresa != 'all') {
-        $count = 1;
-        foreach ($empresa as $emp) {
-            if ($count==1) {
-                $sql .= "WHERE (e.idEmpresa = $emp ";
-            }else{
-                $sql .= " OR e.idEmpresa = $emp ";
-            }
-            $count++;
-        }
-        $sql .= ")";
+    $params = [];
+    
+    if ($empresa != 'all') {
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " WHERE e.idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
-    if ($area!='all') {
-        $sql .= " AND ar.idArea = $area";
+    if ($area != 'all') {
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
 
     $sql .= " GROUP BY a.idAspirante";
-
-    $return = array();
-    $result = mysql_query($sql, $link);
-    while ($row = mysql_fetch_assoc($result)) {
-        array_push($return, $row);
-    }
-    return $return;
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getByIntralaboral($baremo, $empresa, $area, $forma) {
-    $link = conectar();
-    if($forma == "A"){
-        $sql = "SELECT *
-        FROM
-        fichatrabajo AS ft
-        INNER JOIN aspirante AS a
-        ON (ft.Aspirante_idAspirante = a.idAspirante)
-        INNER JOIN cuestionario AS c
-        ON (c.Aspirante_idAspirante = a.idAspirante) AND YEAR(c.fecha)>=2021
-        INNER JOIN empresa AS e
-        ON (a.Empresa_idEmpresa = e.idEmpresa)
-        INNER JOIN area AS ar
-        ON (ar.idArea = ft.Area_idArea)
-        WHERE c.Numero = 3
-        AND c.BaremoPTC = '$baremo' ";
-    }else if($forma == "B"){
-        $sql = "SELECT *
-        FROM
-        fichatrabajo AS ft
-        INNER JOIN aspirante AS a
-        ON (ft.Aspirante_idAspirante = a.idAspirante)
-        INNER JOIN cuestionario AS c
-        ON (c.Aspirante_idAspirante = a.idAspirante) AND YEAR(c.fecha)>=2021
-        INNER JOIN empresa AS e
-        ON (a.Empresa_idEmpresa = e.idEmpresa)
-        INNER JOIN area AS ar
-        ON (ar.idArea = ft.Area_idArea)
-        WHERE c.Numero = 4
-        AND c.BaremoPTC = '$baremo' ";
-    }
+    $pdo = conectar();
+    $sql = "SELECT *
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante AND YEAR(c.fecha) >= 2021
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = :numero AND c.BaremoPTC = :baremo";
 
+    $params = ['baremo' => $baremo, 'numero' => $forma == 'A' ? 3 : 4];
+    
     if ($empresa != 'all') {
-        $count = 1;
-        foreach ($empresa as $emp) {
-            if ($count==1) {
-                $sql .= " AND (ar.Empresa_idEmpresa = $emp ";
-            }else{
-                $sql .= " OR ar.Empresa_idEmpresa = $emp ";
-            }
-            $count++;
-        }
-        $sql .= ")";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND ar.idArea = '$area'";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
-    
+
     $sql .= " GROUP BY ft.idFichaTrabajo";
     
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    
+    return $stmt->rowCount();
 }
 
 function getByExtralaboral($baremo, $empresa, $area) {
-    $link = conectar();
+    $pdo = conectar();
     $sql = "SELECT *
-    FROM
-    fichatrabajo AS ft
-    INNER JOIN aspirante AS a
-    ON (ft.Aspirante_idAspirante = a.idAspirante)
-    INNER JOIN cuestionario AS c
-    ON (c.Aspirante_idAspirante = a.idAspirante) AND YEAR(c.fecha)>=2021
-    INNER JOIN empresa AS e
-    ON (a.Empresa_idEmpresa = e.idEmpresa)
-    INNER JOIN area AS ar
-    ON (ar.idArea = ft.Area_idArea)
-    WHERE c.Numero = 2
-    AND c.BaremoPTC = '$baremo' ";
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante AND YEAR(c.fecha) >= 2021
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = 2 AND c.BaremoPTC = :baremo";
+
+    $params = ['baremo' => $baremo];
 
     if ($empresa != 'all') {
-        $count = 1;
-        foreach ($empresa as $emp) {
-            if ($count==1) {
-                $sql .= " AND (ar.Empresa_idEmpresa = $emp ";
-            }else{
-                $sql .= " OR ar.Empresa_idEmpresa = $emp ";
-            }
-            $count++;
-        }
-        $sql .= ")";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND ar.idArea = '$area'";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
-    
-    $sql .= " GROUP BY ft.idFichaTrabajo";
 
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $sql .= " GROUP BY ft.idFichaTrabajo";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    
+    return $stmt->rowCount();
 }
 
+
 function getByEstres($baremo, $empresa, $area) {
-    $link = conectar();
+    $pdo = conectar();
     $sql = "SELECT *
-    FROM
-    fichatrabajo AS ft
-    INNER JOIN aspirante AS a
-    ON (ft.Aspirante_idAspirante = a.idAspirante)
-    INNER JOIN cuestionario AS c
-    ON (c.Aspirante_idAspirante = a.idAspirante) AND YEAR(c.fecha)>=2021
-    INNER JOIN empresa AS e
-    ON (a.Empresa_idEmpresa = e.idEmpresa)
-    INNER JOIN area AS ar
-    ON (ar.idArea = ft.Area_idArea)
-    WHERE c.Numero = 1
-    AND c.BaremoPTC = '$baremo' ";
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante AND YEAR(c.fecha) >= 2021
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = 1
+            AND c.BaremoPTC = :baremo";
+
+    $params = ['baremo' => $baremo];
 
     if ($empresa != 'all') {
-        $count = 1;
-        foreach ($empresa as $emp) {
-            if ($count==1) {
-                $sql .= " AND (ar.Empresa_idEmpresa = $emp ";
-            }else{
-                $sql .= " OR ar.Empresa_idEmpresa = $emp ";
-            }
-            $count++;
-        }
-        $sql .= ")";
+        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
+        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
+        $params = array_merge($params, $empresa);
     }
 
     if ($area != 'all') {
-        $sql .= " AND ar.idArea = '$area'";
+        $sql .= " AND ar.idArea = ?";
+        $params[] = $area;
     }
     
     $sql .= " GROUP BY ft.idFichaTrabajo";
 
-    $result = mysql_query($sql, $link);
-    $count = mysql_num_rows($result);
-    return $count;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->rowCount();
 }
 
 function setColorDim($valor, $i, $forma) {
@@ -486,105 +446,77 @@ function setColorDom($valor, $i, $forma) {
     }
 }
 
-function getCuestiorioRealizado($user, $c) {
-    $link = conectar();
-
-    $date = date('Y');
-
-    $idasp = getIDByUser($user);
-
-    $sql = "SELECT
-    numero
-    FROM cuestionario
-    WHERE Aspirante_idAspirante = $idasp
-    AND numero = $c
-    AND fecha LIKE '%$date%'";
-
-    $result = mysql_query($sql, $link);
-
-    if (mysql_num_rows($result) > 0) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
 function getEmpresaUsuario() {
-    $link = conectar();
+    $pdo = conectar();
 
-    $sql = "SELECT
-    e.idEmpresa
-    FROM empresa AS e
-    INNER JOIN aspirante AS a
-    ON a.Empresa_idEmpresa = e.idEmpresa
-    WHERE a.Cedula = '{$_SESSION['usuario']}'
-    ORDER BY a.idAspirante DESC
-    LIMIT 1";
+    $sql = "SELECT e.idEmpresa
+            FROM empresa AS e
+            INNER JOIN aspirante AS a
+            ON a.Empresa_idEmpresa = e.idEmpresa
+            WHERE a.Cedula = :usuario
+            ORDER BY a.idAspirante DESC
+            LIMIT 1";
 
-    $result = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['usuario' => $_SESSION['usuario']]);
 
-    return mysql_fetch_assoc($result);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function getForma($user, $forma) {
-    $link = conectar();
-
+    $pdo = conectar();
     $idasp = getIDByUser($user);
 
-    $sql = "SELECT
-    Forma
-    FROM aspirante
-    WHERE idAspirante = $idasp
-    AND Forma = $forma
-    ORDER BY idAspirante DESC";
+    $sql = "SELECT Forma
+            FROM aspirante
+            WHERE idAspirante = :idasp
+            AND Forma = :forma
+            ORDER BY idAspirante DESC";
 
-    $result = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        'idasp' => $idasp,
+        'forma' => $forma
+    ]);
 
-    if (mysql_num_rows($result) > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return $stmt->rowCount() > 0;
 }
 
-function getCuestiorioRealizadoString() {
-    $link = conectar();
+function getCuestionarioRealizadoString() {
+    $pdo = conectar();
 
-    $sql = "SELECT
-    numero
-    FROM cuestionario
-    WHERE Aspirante_idAspirante = {$_SESSION['id']}";
+    $sql = "SELECT numero
+            FROM cuestionario
+            WHERE Aspirante_idAspirante = :id";
 
-    $result = mysql_query($sql, $link);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => $_SESSION['id']]);
 
-    $return = array();
-
-    while ($fila = mysql_fetch_array($result, mysql_NUM)) {
-        array_push($return, $fila[0]);
+    $return = [];
+    while ($fila = $stmt->fetch(PDO::FETCH_NUM)) {
+        $return[] = $fila[0];
     }
 
     return $return;
 }
 
 function validarFicha($user) {
-    $link = conectar();
+    $pdo = conectar();
 
-    $sql = "SELECT
-            *
-    FROM fichapersonal AS f
-    INNER JOIN aspirante AS a
-    ON f.Aspirante_idAspirante = a.idAspirante
-    WHERE a.Cedula = $user
-    AND a.Empresa_idEmpresa = '{$_SESSION['idEmpresa']}'";
-    
-    $result = mysql_query($sql, $link);
+    $sql = "SELECT *
+            FROM fichapersonal AS f
+            INNER JOIN aspirante AS a
+            ON f.Aspirante_idAspirante = a.idAspirante
+            WHERE a.Cedula = :user
+            AND a.Empresa_idEmpresa = :idEmpresa";
 
-    if (mysql_num_rows($result) > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        'user' => $user,
+        'idEmpresa' => $_SESSION['idEmpresa']
+    ]);
+
+    return $stmt->rowCount() > 0;
 }
 
 function transformarForma($puntaje, $factor) {

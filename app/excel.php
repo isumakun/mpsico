@@ -1,5 +1,5 @@
 <?php $title = 'Exportar Excel'; ?>
-<?php require './header.php'; ?>  
+<?php require './header.php'; ?>
 
 <?php
 require_once 'funciones.php';
@@ -29,15 +29,19 @@ $sql = "SELECT
 		WHERE e.idEmpresa = '{$_GET['empresa']}' AND c.Numero = '{$_GET['numero']}'";
 
 
-$query = mysql_query($sql, $link);
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <style type="text/css">
-	td,td,th{
+	td,
+	td,
+	th {
 		font-size: 12px !important;
 	}
 
-	table{
+	table {
 		display: none;
 	}
 </style>
@@ -45,25 +49,25 @@ $query = mysql_query($sql, $link);
 <div class="box box-primary">
 	<div class="box-header">
 
-	<?php if ($_GET['numero']==3) {
+		<?php if ($_GET['numero'] == 3) {
 		?>
-		<a href="javascript:tableToExcel('export_table', 'Reporte_Intralaboral_FORMA_A')" class="btn btn-success"><i class="fa fa-download"></i> Exportar a Excel</a>
+			<a href="javascript:tableToExcel('export_table', 'Reporte_Intralaboral_FORMA_A')" class="btn btn-success"><i class="fa fa-download"></i> Exportar a Excel</a>
 		<?php
-	}else{
+		} else {
 		?>
-		<a href="javascript:tableToExcel('export_table', 'Reporte_Intralaboral_FORMA_B')" class="btn btn-success"><i class="fa fa-download"></i> Exportar a Excel</a>
+			<a href="javascript:tableToExcel('export_table', 'Reporte_Intralaboral_FORMA_B')" class="btn btn-success"><i class="fa fa-download"></i> Exportar a Excel</a>
 		<?php
-	} ?>
+		} ?>
 
 		<div class="table-responsive">
 			<table class="table-bordered" id="export_table">
 				<thead>
 					<?php
-					if ($_GET['numero']==3) {
+					if ($_GET['numero'] == 3) {
 						$dom1 = 4;
 						$dom2 = 9;
 						$dom3 = 17;
-						?>
+					?>
 						<tr>
 							<th>Empresa</th>
 							<th>Ciudad</th>
@@ -127,7 +131,7 @@ $query = mysql_query($sql, $link);
 							<th class="d4" colspan="2">Recompensas</th>
 
 							<th class="d5">Total Intralaboral Forma A</th>
-							<th class="d5">Interpretación</th>	
+							<th class="d5">Interpretación</th>
 
 							<th class="d1">Tiempo fuera del trabajo</th>
 							<th class="d1">Interpretación</th>
@@ -148,12 +152,12 @@ $query = mysql_query($sql, $link);
 							<th class="d1">Puntaje Estres</th>
 							<th class="d1">Interpretación</th>
 						</tr>
-						<?php
-					}else if ($_GET['numero']==4) {
+					<?php
+					} else if ($_GET['numero'] == 4) {
 						$dom1 = 3;
 						$dom2 = 8;
 						$dom3 = 15;
-						?>
+					?>
 						<tr>
 							<th>Empresa</th>
 							<th>Ciudad</th>
@@ -236,42 +240,41 @@ $query = mysql_query($sql, $link);
 							<th class="d1">Interpretación</th>
 
 						</tr>
-						<?php
+					<?php
 					}
 					?>
 				</thead>
 				<tbody>
 					<?php
 
-					while ($line = mysql_fetch_array($query)) {
-						?>
+					foreach ($rows as $line) {
+					?>
 						<tr>
 							<td><?= $line['Empresa']; ?></td>
-							<td><?= utf8_encode($line['Ciudad']); ?></td>
-							<td><?= utf8_encode($line['Area']); ?></td>
+							<td><?= mb_convert_encoding($line['Ciudad'], 'UTF-8'); ?></td>
+							<td><?= mb_convert_encoding($line['Area'], 'UTF-8'); ?></td>
 							<td><?= $line['Cedula']; ?></td>
-							<td><?= utf8_encode($line['Aspirante']); ?></td>
+							<td><?= mb_convert_encoding($line['Aspirante'], 'UTF-8'); ?></td>
 							<td><?= $line['Sexo']; ?></td>
-							<td><?= utf8_encode($line['EstadoCivil']); ?></td>
-							<td><?= utf8_encode($line['NivelEstudios']); ?></td>
+							<td><?= mb_convert_encoding($line['EstadoCivil'], 'UTF-8'); ?></td>
+							<td><?= mb_convert_encoding($line['NivelEstudios'], 'UTF-8'); ?></td>
 							<td><?= $line['Estrato']; ?></td>
-							<td><?= utf8_encode($line['Vivienda']); ?></td>
-							<td><?= utf8_encode($line['Tiempo']); ?></td>
-							<td><?= utf8_encode($line['TipoCargo']); ?></td>
+							<td><?= mb_convert_encoding($line['Vivienda'], 'UTF-8'); ?></td>
+							<td><?= mb_convert_encoding($line['Tiempo'], 'UTF-8'); ?></td>
+							<td><?= mb_convert_encoding($line['TipoCargo'], 'UTF-8'); ?></td>
 							<?php
 							$pun = 0;
 							$inter = "";
 
-							$sql3 = "
-							SELECT dominio.Puntaje AS 'dom_pun', 
-							dominio.Valor AS 'dom_val', 
-							cuestionario.PTC, 
-							cuestionario.BaremoPTC
-							FROM
-							dominio
-							INNER JOIN cuestionario
-							ON (dominio.Cuestionario_idCuestionario = cuestionario.idCuestionario)
-							WHERE cuestionario.Aspirante_idAspirante = {$line['ID']} AND Numero = ".$_GET['numero'];
+							$sql3 = "SELECT dominio.Puntaje AS 'dom_pun', 
+									dominio.Valor AS 'dom_val', 
+									cuestionario.PTC, 
+									cuestionario.BaremoPTC
+									FROM
+									dominio
+									INNER JOIN cuestionario
+									ON (dominio.Cuestionario_idCuestionario = cuestionario.idCuestionario)
+									WHERE cuestionario.Aspirante_idAspirante = {$line['ID']} AND Numero = " . $_GET['numero'];
 
 							$domPuntajes = array();
 							$domValores = array();
@@ -288,70 +291,70 @@ $query = mysql_query($sql, $link);
 							dimension
 							INNER JOIN cuestionario
 							ON (dimension.Cuestionario_idCuestionario = cuestionario.idCuestionario)
-							WHERE cuestionario.Aspirante_idAspirante = " . $line['ID'] . " AND Numero = ".$_GET['numero'];
-							
+							WHERE cuestionario.Aspirante_idAspirante = " . $line['ID'] . " AND Numero = " . $_GET['numero'];
+
 							$query2 = mysql_query($sql2, $link);
 
 							$aux = 0;
 
 							while ($row = mysql_fetch_array($query2)) {
 								if ($aux == 3) {
-									if ($_GET['numero']==3) {
-										if ($line['TipoCargo']=='Jefatura - tiene personal a cargo') {
-											?>
+									if ($_GET['numero'] == 3) {
+										if ($line['TipoCargo'] == 'Jefatura - tiene personal a cargo') {
+							?>
 											<td><?= $row['Puntaje'] ?></td>
 											<td><?= $row['Valor'] ?></td>
-											<?php
-										}else{
-											?>
+										<?php
+										} else {
+										?>
 											<td>N/A</td>
 											<td>N/A</td>
-											<?php
+									<?php
 										}
 									}
-								}else{
+								} else {
 									?>
 									<td><?= $row['Puntaje'] ?></td>
 									<td><?= $row['Valor'] ?></td>
-									<?php
+							<?php
 								}
 								$aux++;
 							}
 							?>
-							<td><?=$domPuntajes[0]?></td>
-							<td><?=$domValores[0]?></td>
-							<td><?=$domPuntajes[1]?></td>
-							<td><?=$domValores[1]?></td>
-							<td><?=$domPuntajes[2]?></td>
-							<td><?=$domValores[2]?></td>
-							<td><?=$domPuntajes[3]?></td>
-							<td><?=$domValores[3]?></td>
-							<td><?=$line['PTC']?><</td>
-							<td><?=$line['BaremoPTC']?><</td>
-							<?php
-							$dimensionesExtra = "SELECT dimension.Puntaje, dimension.Valor
+							<td><?= $domPuntajes[0] ?></td>
+							<td><?= $domValores[0] ?></td>
+							<td><?= $domPuntajes[1] ?></td>
+							<td><?= $domValores[1] ?></td>
+							<td><?= $domPuntajes[2] ?></td>
+							<td><?= $domValores[2] ?></td>
+							<td><?= $domPuntajes[3] ?></td>
+							<td><?= $domValores[3] ?></td>
+							<td><?= $line['PTC'] ?><< /td>
+							<td><?= $line['BaremoPTC'] ?><< /td>
+									<?php
+									$dimensionesExtra = "SELECT dimension.Puntaje, dimension.Valor
 							FROM
 							dimension
 							INNER JOIN cuestionario
 							ON (dimension.Cuestionario_idCuestionario = cuestionario.idCuestionario)
 							WHERE cuestionario.Aspirante_idAspirante = " . $line['ID'] . " AND Numero = 2";
 
-							$queryEx = mysql_query($dimensionesExtra, $link);
+									$queryEx = mysql_query($dimensionesExtra, $link);
 
-							$dimens = array();
+									$dimens = array();
 
-							while ($row = mysql_fetch_array($queryEx)) {
-								$dimens[] = $row;
-							}
+									while ($row = mysql_fetch_array($queryEx)) {
+										$dimens[] = $row;
+									}
 
-							foreach ($dimens as $dim) {
-								?>
-								<td><?= $dim['Puntaje'] ?></td>
-								<td><?= $dim['Valor'] ?></td>
-								<?php
-							}
+									foreach ($dimens as $dim) {
+									?>
+							<td><?= $dim['Puntaje'] ?></td>
+							<td><?= $dim['Valor'] ?></td>
+						<?php
+									}
 
-							$sql5 = "SELECT c.*
+									$sql5 = "SELECT c.*
 							FROM aspirante as a
 							INNER JOIN fichapersonal as fp
 							ON fp.Aspirante_idAspirante = a.idAspirante
@@ -367,124 +370,126 @@ $query = mysql_query($sql, $link);
 							ORDER BY c.Numero DESC";
 
 
-							$result = mysql_query($sql5, $link);
+									$result = mysql_query($sql5, $link);
 
-							$rows =  array();
+									$rows =  array();
 
-							while ($row = mysql_fetch_array($result)) {
-								$rows[] = $row;
-							}
-							
-							foreach ($rows as $row) {
-								?>
-								<td><?= $row['PTC'] ?></td>
-								<td><?= $row['BaremoPTC'] ?></td>
-								<?php
-							}
-							?>
-						</tr>
+									while ($row = mysql_fetch_array($result)) {
+										$rows[] = $row;
+									}
+
+									foreach ($rows as $row) {
+						?>
+							<td><?= $row['PTC'] ?></td>
+							<td><?= $row['BaremoPTC'] ?></td>
 						<?php
+									}
+						?>
+						</tr>
+					<?php
 					}
 					?>
 
-				</tbody></table>
-			</div>
+				</tbody>
+			</table>
 		</div>
 	</div>
+</div>
 
-	<?php require './footer.php'; ?>
+<?php require './footer.php'; ?>
 
 
-	<!-- ============ JS FILES ============ --> 
+<!-- ============ JS FILES ============ -->
 
-	<script type="text/javascript" src="js/universal/jquery.js"></script> 
-	<script src="js/bootstrap/bootstrap.min.js" type="text/javascript"></script> 
-	<script src="js/masterslider/jquery.easing.min.js"></script> 
-	<script src="js/masterslider/masterslider.min.js"></script> 
-	<script type="text/javascript">
-		(function ($) {
-			"use strict";
-			var slider = new MasterSlider();
-                // adds Arrows navigation control to the slider.
-                slider.control('arrows');
-                slider.control('bullets');
+<script type="text/javascript" src="js/universal/jquery.js"></script>
+<script src="js/bootstrap/bootstrap.min.js" type="text/javascript"></script>
+<script src="js/masterslider/jquery.easing.min.js"></script>
+<script src="js/masterslider/masterslider.min.js"></script>
+<script type="text/javascript">
+	(function($) {
+		"use strict";
+		var slider = new MasterSlider();
+		// adds Arrows navigation control to the slider.
+		slider.control('arrows');
+		slider.control('bullets');
 
-                slider.setup('masterslider', {
-                    width: 1600, // slider standard width
-                    height: 630, // slider standard height
-                    space: 0,
-                    speed: 45,
-                    layout: 'fullwidth',
-                    loop: true,
-                    preload: 0,
-                    autoplay: true,
-                    view: "parallaxMask"
-                });
+		slider.setup('masterslider', {
+			width: 1600, // slider standard width
+			height: 630, // slider standard height
+			space: 0,
+			speed: 45,
+			layout: 'fullwidth',
+			loop: true,
+			preload: 0,
+			autoplay: true,
+			view: "parallaxMask"
+		});
 
-            })(jQuery);
-        </script> 
-        <script type="text/javascript">
-        	(function ($) {
-        		"use strict";
-        		var slider = new MasterSlider();
+	})(jQuery);
+</script>
+<script type="text/javascript">
+	(function($) {
+		"use strict";
+		var slider = new MasterSlider();
 
-        		slider.setup('masterslider2', {
-                    width: 570, // slider standard width
-                    height: 300, // slider standard height
-                    space: 0,
-                    speed: 27,
-                    layout: 'boxed',
-                    loop: true,
-                    preload: 0,
-                    autoplay: true,
-                    view: "basic",
-                });
-        	})(jQuery);
-        </script> 
-        <script type="text/javascript">
-		function tableToExcel(name1, name2){
+		slider.setup('masterslider2', {
+			width: 570, // slider standard width
+			height: 300, // slider standard height
+			space: 0,
+			speed: 27,
+			layout: 'boxed',
+			loop: true,
+			preload: 0,
+			autoplay: true,
+			view: "basic",
+		});
+	})(jQuery);
+</script>
+<script type="text/javascript">
+	function tableToExcel(name1, name2) {
 
-		    //getting data from our table
-		    var data_type = 'data:application/vnd.ms-excel';
-		    var table_div = document.getElementById('export_table');
-		    var html = table_div.outerHTML.replace(/ /g, '%20');
+		//getting data from our table
+		var data_type = 'data:application/vnd.ms-excel';
+		var table_div = document.getElementById('export_table');
+		var html = table_div.outerHTML.replace(/ /g, '%20');
 
-		     while (html.indexOf('á') != -1) html = html.replace('á', '&aacute;');
-			  while (html.indexOf('é') != -1) html = html.replace('é', '&eacute;');
-			  while (html.indexOf('í') != -1) html = html.replace('í', '&iacute;');
-			  while (html.indexOf('ó') != -1) html = html.replace('ó', '&oacute;');
-			  while (html.indexOf('ú') != -1) html = html.replace('ú', '&uacute;');
-			  while (html.indexOf('º') != -1) html = html.replace('º', '&ordm;');
+		while (html.indexOf('á') != -1) html = html.replace('á', '&aacute;');
+		while (html.indexOf('é') != -1) html = html.replace('é', '&eacute;');
+		while (html.indexOf('í') != -1) html = html.replace('í', '&iacute;');
+		while (html.indexOf('ó') != -1) html = html.replace('ó', '&oacute;');
+		while (html.indexOf('ú') != -1) html = html.replace('ú', '&uacute;');
+		while (html.indexOf('º') != -1) html = html.replace('º', '&ordm;');
 
-		    var a = document.createElement('a');
-		    a.href = data_type + ', ' + html;
-		    a.download = name2+'.xls';
-		    a.click();
-		}
-		</script>
-        <script src="dist/js/xlsx.core.min.js"></script>
-        <script src="dist/js/FileSaver.min.js"></script>
-        <script src="dist/js/tableexport.js"></script>
-        <script type="text/javascript">
-        	$(".table").tableExport();
-        </script>
-        <script src="js/mainmenu/customeUI.js"></script>  
-        <script src="js/owl-carousel/owl.carousel.js"></script> 
-        <script src="js/owl-carousel/custom.js"></script> 
-        <script type="text/javascript" src="js/tabs/smk-accordion.js"></script>
-        <script type="text/javascript" src="js/tabs/custom.js"></script> 
-        <script src="js/scrolltotop/totop.js"></script> 
-        <script src="js/mainmenu/jquery.sticky.js"></script> 
-        <script src="js/custom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script> 
-        <script src="js/style-swicher/style-swicher.js"></script> 
-        <script src="js/style-swicher/custom.js"></script> 
-        <script type="text/javascript" src="js/smart-forms/jquery.form.min.js"></script> 
-        <script type="text/javascript" src="js/smart-forms/jquery.validate.min.js"></script> 
-        <script type="text/javascript" src="js/smart-forms/additional-methods.min.js"></script> 
-        <script type="text/javascript" src="js/smart-forms/smart-form.js"></script> 
-        <script src="js/scripts/functions.js" type="text/javascript"></script>
+		var a = document.createElement('a');
+		a.href = data_type + ', ' + html;
+		a.download = name2 + '.xls';
+		a.click();
+	}
+</script>
+<script src="dist/js/xlsx.core.min.js"></script>
+<script src="dist/js/FileSaver.min.js"></script>
+<script src="dist/js/tableexport.js"></script>
+<script type="text/javascript">
+	$(".table").tableExport();
+</script>
+<script src="js/mainmenu/customeUI.js"></script>
+<script src="js/owl-carousel/owl.carousel.js"></script>
+<script src="js/owl-carousel/custom.js"></script>
+<script type="text/javascript" src="js/tabs/smk-accordion.js"></script>
+<script type="text/javascript" src="js/tabs/custom.js"></script>
+<script src="js/scrolltotop/totop.js"></script>
+<script src="js/mainmenu/jquery.sticky.js"></script>
+<script src="js/custom-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="js/style-swicher/style-swicher.js"></script>
+<script src="js/style-swicher/custom.js"></script>
+<script type="text/javascript" src="js/smart-forms/jquery.form.min.js"></script>
+<script type="text/javascript" src="js/smart-forms/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/smart-forms/additional-methods.min.js"></script>
+<script type="text/javascript" src="js/smart-forms/smart-form.js"></script>
+<script src="js/scripts/functions.js" type="text/javascript"></script>
 
-    </body>
+</body>
 
-    <!-- Mirrored from codelayers.net/templates/hasta/medical/fullwidth/index.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 01 Sep 2015 13:09:39 GMT -->
-    </html>
+<!-- Mirrored from codelayers.net/templates/hasta/medical/fullwidth/index.php by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 01 Sep 2015 13:09:39 GMT -->
+
+</html>

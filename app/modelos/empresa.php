@@ -3,186 +3,139 @@
 require "../funciones.php";
 
 function agregarEmpresa($nit, $nombre, $direccion, $telefono, $email, $sector, $ciudad, $imagen) {
-
-    $link = conectar();
-
-    $_FILES["imagen"] = $imagen;
-
-    $formatos = array('image/jpeg', 'image/jpg', 'image/png');
+    $pdo = conectar();
     $prefijo = substr(md5(uniqid(rand())), 0, 6);
     $ruta = null;
 
-    if (!$_FILES["imagen"]["size"] == 0) {
-        if ($_FILES["imagen"]["size"] < 2000000) {
-            if (isset($_FILES['imagen'])) {
-                if (in_array($_FILES['imagen']['type'], $formatos)) {
-                    if (move_uploaded_file($_FILES['imagen']['tmp_name'], "../logos/" . $prefijo . $_FILES['imagen']['name'])) {
-                        $ruta = "fotos/" . $prefijo . $_FILES['imagen']['name'];
+    try {
+        if (!empty($imagen['name'])) {
+            $formatos = array('image/jpeg', 'image/jpg', 'image/png');
+            $maxSize = 2000000; // 2 MB
 
-                        $sql = "INSERT INTO empresa
-                            (Nit,
-                             Nombre,
-                             Direccion,
-                             Telefono,
-                             Email,
-                             Sector,
-                             Ciudad,
-                             Logo)
-                             VALUES ('$nit',
-                                        '$nombre',
-                                        '$direccion',
-                                        '$telefono',
-                                        '$email',
-                                        '$sector',
-                                        '$ciudad', '$ruta');";
+            if ($imagen['size'] < $maxSize) {
+                if (in_array($imagen['type'], $formatos)) {
+                    $uploadDir = "../logos/";
+                    $fileName = $prefijo . basename($imagen['name']);
+                    $filePath = $uploadDir . $fileName;
 
-                        mysql_query($sql, $link);
-
-                        $error = mysql_error($link);
-
-                        if ($error == null) {
-                            header("Location: ../empresas.php?estado=guardado");
-                        } else {
-                            //header("Location: ../nuevoEmpresa.php?estado=errordatos");
-                            echo "<center>";
-                            echo "<h1> " . $error . "</h1>";
-                            echo "</center>";
-                        }
-
-                        mysql_close($link);
+                    if (move_uploaded_file($imagen['tmp_name'], $filePath)) {
+                        $ruta = "logos/" . $fileName;
                     } else {
-                        header("Location: ../empresas.php?estado=archivoNoMovido");
+                        throw new Exception("No se pudo mover el archivo.");
                     }
                 } else {
-                    echo 'Error en la imagen';
+                    throw new Exception("Formato de imagen no válido.");
                 }
             } else {
-                header("Location: ../empresas.php?estado=nohayArchivo");
+                throw new Exception("El archivo excede el tamaño máximo permitido.");
             }
-        } else {
-            header("Location: ../empresas.php?estado=errorTamaño");
         }
-    }else{
-        $sql = "INSERT INTO empresa
-                            (Nit,
-                             Nombre,
-                             Direccion,
-                             Telefono,
-                             Email,
-                             Sector,
-                             Ciudad
-                             )
-                             VALUES ('$nit',
-                                        '$nombre',
-                                        '$direccion',
-                                        '$telefono',
-                                        '$email',
-                                        '$sector',
-                                        '$ciudad');";
 
-                        mysql_query($sql, $link);
+        $sql = "INSERT INTO empresa (Nit, Nombre, Direccion, Telefono, Email, Sector, Ciudad, Logo)
+                VALUES (:nit, :nombre, :direccion, :telefono, :email, :sector, :ciudad, :ruta)";
 
-                        $error = mysql_error($link);
+        $stmt = $pdo->prepare($sql);
 
-                        if ($error == null) {
-                            header("Location: ../empresas.php?estado=guardado");
-                        } else {
-                            //header("Location: ../nuevoEmpresa.php?estado=errordatos");
-                            echo "<center>";
-                            echo "<h1> " . $error . "</h1>";
-                            echo "</center>";
-                        }
+        $stmt->execute([
+            ':nit' => $nit,
+            ':nombre' => $nombre,
+            ':direccion' => $direccion,
+            ':telefono' => $telefono,
+            ':email' => $email,
+            ':sector' => $sector,
+            ':ciudad' => $ciudad,
+            ':ruta' => $ruta
+        ]);
 
-                        mysql_close($link);
+        header("Location: ../empresas?estado=guardado");
+
+    } catch (Exception $e) {
+        echo "<center><h1>Error: " . $e->getMessage() . "</h1></center>";
     }
 }
 
 function eliminarEmpresa($idEmpresa) {
-    $link = conectar();
-    $sql = "DELETE
-            FROM empresa
-            WHERE idEmpresa = $idEmpresa";
+    $pdo = conectar();
 
-    mysql_query($sql, $link);
-    $error = mysql_error($link);
+    try {
+        $sql = "DELETE FROM empresa WHERE idEmpresa = :idEmpresa";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':idEmpresa' => $idEmpresa]);
 
-    if ($error == null) {
-        header("Location: ../empresas.php");
-    } else {
-        header("Location: ../empresas.php?estado=errordatos");
-        echo "<center>";
-        echo "<h1> " . $error . "</h1>";
-        echo "</center>";
+        header("Location: ../empresas");
+    } catch (PDOException $e) {
+        echo "<center><h1>Error: " . $e->getMessage() . "</h1></center>";
+        header("Location: ../empresas?estado=errordatos");
     }
-    mysql_close($link);
 }
 
 function editarEmpresa($idEmpresa, $nit, $nombre, $direccion, $telefono, $email, $sector, $ciudad, $imagen) {
-    $link = conectar();
+    $pdo = conectar();
+    $prefijo = substr(md5(uniqid(rand())), 0, 6);
 
-    $_FILES["imagen"] = $imagen;
+    try {
+        if (!empty($imagen['name'])) {
+            $formatos = array('image/jpeg', 'image/jpg', 'image/png');
+            $maxSize = 2000000; // 2 MB
 
-    if ($_FILES["imagen"]["size"] == 0) {
+            if ($imagen['size'] < $maxSize) {
+                if (in_array($imagen['type'], $formatos)) {
+                    $uploadDir = "../logos/";
+                    $fileName = $prefijo . basename($imagen['name']);
+                    $filePath = $uploadDir . $fileName;
 
-        $sql = "UPDATE empresa
-            SET 
-              Nit = '$nit',
-              Nombre = '$nombre',
-              Direccion = '$direccion',
-              Telefono = '$telefono',
-              Email = '$email',
-              Sector = '$sector',
-              Ciudad = '$ciudad'
-            WHERE idEmpresa = '$idEmpresa';";
-
-            mysql_query($sql, $link);
-    } else {
-        $formatos = array('image/jpeg', 'image/jpg', 'image/png');
-        $prefijo = substr(md5(uniqid(rand())), 0, 6);
-        $ruta = null;
-
-        if ($_FILES["imagen"]["size"] < 2000000) {
-            if (isset($_FILES['imagen'])) {
-                if (in_array($_FILES['imagen']['type'], $formatos)) {
-                    if (move_uploaded_file($_FILES['imagen']['tmp_name'], "../logos/" . $prefijo . $_FILES['imagen']['name'])) {
-                        $ruta = "logos/" . $prefijo . $_FILES['imagen']['name'];
-
+                    if (move_uploaded_file($imagen['tmp_name'], $filePath)) {
+                        $ruta = "logos/" . $fileName;
                         $sql = "UPDATE empresa
-                                SET 
-                                  Nit = '$nit',
-                                  Nombre = '$nombre',
-                                  Direccion = '$direccion',
-                                  Telefono = '$telefono',
-                                  Email = '$email',
-                                  Sector = '$sector',
-                                  Ciudad = '$ciudad',
-                                  Logo = '$ruta'
-                                WHERE idEmpresa = '$idEmpresa';";
-
-                        mysql_query($sql, $link);
+                                SET Nit = :nit, Nombre = :nombre, Direccion = :direccion,
+                                    Telefono = :telefono, Email = :email, Sector = :sector,
+                                    Ciudad = :ciudad, Logo = :ruta
+                                WHERE idEmpresa = :idEmpresa";
+                        $params = [
+                            ':nit' => $nit,
+                            ':nombre' => $nombre,
+                            ':direccion' => $direccion,
+                            ':telefono' => $telefono,
+                            ':email' => $email,
+                            ':sector' => $sector,
+                            ':ciudad' => $ciudad,
+                            ':ruta' => $ruta,
+                            ':idEmpresa' => $idEmpresa
+                        ];
                     } else {
-                        header("Location: ../empresas.php?estado=archivoNoMovido");
+                        throw new Exception("No se pudo mover el archivo.");
                     }
                 } else {
-                    //echo $imagen;
+                    throw new Exception("Formato de imagen no válido.");
                 }
             } else {
-                header("Location: ../empresas.php?estado=nohayArchivo");
+                throw new Exception("El archivo excede el tamaño máximo permitido.");
             }
         } else {
-            header("Location: ../empresas.php?estado=errorTamaño");
+            $sql = "UPDATE empresa
+                    SET Nit = :nit, Nombre = :nombre, Direccion = :direccion,
+                        Telefono = :telefono, Email = :email, Sector = :sector,
+                        Ciudad = :ciudad
+                    WHERE idEmpresa = :idEmpresa";
+            $params = [
+                ':nit' => $nit,
+                ':nombre' => $nombre,
+                ':direccion' => $direccion,
+                ':telefono' => $telefono,
+                ':email' => $email,
+                ':sector' => $sector,
+                ':ciudad' => $ciudad,
+                ':idEmpresa' => $idEmpresa
+            ];
         }
-    }
 
-    $error = mysql_error($link);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
 
-    if ($error == null) {
-        header("Location: ../empresas.php?estado=guardado");
-    } else {
-        // header("Location: ../index3.php?estado=errordatos");
-        echo "<center>";
-        echo "<h1> " . $error . "</h1>";
-        echo "</center>";
+        header("Location: ../empresas?estado=guardado");
+
+    } catch (Exception $e) {
+        echo "<center><h1>Error: " . $e->getMessage() . "</h1></center>";
     }
-    mysql_close($link);
 }
+?>

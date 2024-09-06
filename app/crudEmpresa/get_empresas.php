@@ -1,15 +1,21 @@
 <?php
 
-$link = conectar();
+$pdo = conectar();
 
-$sql = "SELECT * FROM empresa ORDER BY idEmpresa DESC";
+try {
+    $sql = "SELECT * FROM empresa ORDER BY idEmpresa DESC";
+    $stmt = $pdo->query($sql);
+    
+    $empresas = array();
+    
+    // Obtener los resultados y agregarlos al array
+    while ($line = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $empresas[] = $line;
+    }
 
-$query = mysql_query($sql, $link);
-
-$empresas = array();
-$fila = 0;
-$n = 0;
-
-while ($line = mysql_fetch_array($query)) {
-   array_push($empresas, $line);
+} catch (PDOException $e) {
+    echo "<center><h1>Error: " . $e->getMessage() . "</h1></center>";
 }
+
+$pdo = null;
+?>
