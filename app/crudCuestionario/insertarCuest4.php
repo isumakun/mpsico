@@ -75,8 +75,8 @@ try{
     $idasp = getIDByUser($_SESSION['usuario']);
 
     // Use plain query with variable interpolation
-    $sql = "INSERT INTO cuestionario (Numero, PTC, BaremoPTC, Aspirante_idAspirante)
-            VALUES ('{$_POST['numero']}', '$trans', '$baremosPTC', '$idasp')";
+    $sql = "INSERT INTO cuestionario (Numero, PTC, BaremoPTC, Aspirante_idAspirante, Fecha)
+            VALUES ('{$_POST['numero']}', '$trans', '$baremosPTC', '$idasp', now())";
     $link->query($sql);
     //get last inserted id
     $id = $link->lastInsertId();

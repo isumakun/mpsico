@@ -42,8 +42,8 @@ try {
         ? baremosPTCEstresJefe($puntajeTransformado) 
         : baremosPTCEstresAux($puntajeTransformado);
 
-    $sql = "INSERT INTO cuestionario (Numero, PTC, BaremoPTC, Aspirante_idAspirante)
-            VALUES (:numero, :puntajeTransformado, :baremosPTC, :idasp)";
+    $sql = "INSERT INTO cuestionario (Numero, PTC, BaremoPTC, Aspirante_idAspirante, Fecha)
+            VALUES (:numero, :puntajeTransformado, :baremosPTC, :idasp, now())";
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':numero', $_POST['numero'], PDO::PARAM_STR);

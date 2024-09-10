@@ -52,8 +52,8 @@ try {
 
     $idasp = getIDByUser($_SESSION['usuario']);
 
-    $sql = "INSERT INTO cuestionario (Numero, PTC, BaremoPTC, Aspirante_idAspirante)
-            VALUES (:numero, :trans, :baremo, :idasp)";
+    $sql = "INSERT INTO cuestionario (Numero, PTC, BaremoPTC, Aspirante_idAspirante, Fecha)
+            VALUES (:numero, :trans, :baremo, :idasp, now())";
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute([

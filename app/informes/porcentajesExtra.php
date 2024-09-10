@@ -74,68 +74,70 @@
 
 <?php
 
-function getNumero($pos, $baremo) {
-
+function get_numero($pos, $baremo) {
     $link = conectar();
 
     $sql = "SELECT *
-            FROM
-            fichatrabajo AS ft
-            INNER JOIN aspirante AS a
-            ON (ft.Aspirante_idAspirante = a.idAspirante)
-            INNER JOIN cuestionario AS c
-            ON (c.Aspirante_idAspirante = a.idAspirante)
-            INNER JOIN empresa AS e
-            ON (a.Empresa_idEmpresa = e.idEmpresa)
-            INNER JOIN area AS ar
-            ON (ar.idArea = ft.Area_idArea)
-        WHERE c.Numero = 2";
+            FROM fichatrabajo AS ft
+            INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante
+            INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+            INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+            WHERE c.Numero = 2";
 
     if ($_POST['empresa'] != 'all') {
-        $count = 1;
-        foreach ($_POST['empresa'] as $empresa) {
-            if ($count==1) {
-                $sql .= " AND (e.idEmpresa = $empresa ";
-            }else{
-                $sql .= " OR e.idEmpresa = $empresa ";
-            }
-            $count++;
+        $sql .= " AND (";
+        $placeholders = [];
+        $empresa_params = [];
+        foreach ($_POST['empresa'] as $index => $empresa) {
+            $placeholders[] = ":empresa_$index";
+            $empresa_params[":empresa_$index"] = $empresa;
         }
-        $sql .= ")";
+        $sql .= "e.idEmpresa IN (" . implode(',', $placeholders) . "))";
     }
 
     if ($_POST['area'] != 'all') {
-        $sql .= " AND ar.idArea = '{$_POST['area']}'";
+        $sql .= " AND ar.idArea = :area";
     }
 
     $sql .= " GROUP BY ft.idFichaTrabajo";
 
-    //echo $sql;
-    $aspirantes = mysql_query($sql, $link);
+    $stmt = $link->prepare($sql);
 
-    $cantidad = mysql_num_rows($aspirantes);
-    //echo 'CANTIDAD: '.$cantidad;
+    if ($_POST['empresa'] != 'all') {
+        foreach ($empresa_params as $placeholder => $value) {
+            $stmt->bindValue($placeholder, $value, PDO::PARAM_INT);
+        }
+    }
+    if ($_POST['area'] != 'all') {
+        $stmt->bindValue(':area', $_POST['area'], PDO::PARAM_INT);
+    }
 
+    $stmt->execute();
+    $aspirantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $cantidad = count($aspirantes);
     $count = 0;
-    while ($line = mysql_fetch_array($aspirantes)) {
 
+    foreach ($aspirantes as $line) {
         $sql3 = "SELECT dimension.Valor
-                FROM
-                dimension
-                INNER JOIN cuestionario
-                    ON (dimension.Cuestionario_idCuestionario = cuestionario.idCuestionario)
-                    WHERE cuestionario.Aspirante_idAspirante = " . $line['idAspirante'] . " AND Numero = 2";
+                 FROM dimension
+                 INNER JOIN cuestionario ON dimension.Cuestionario_idCuestionario = cuestionario.idCuestionario
+                 WHERE cuestionario.Aspirante_idAspirante = :idAspirante AND Numero = 2";
 
+        $stmt3 = $link->prepare($sql3);
+        $stmt3->bindValue(':idAspirante', $line['idAspirante'], PDO::PARAM_INT);
+        $stmt3->execute();
 
+        $val_dim = $stmt3->fetchAll(PDO::FETCH_COLUMN);
 
-        $valDim = mysql_query($sql3, $link);
-
-        $aux = mysql_result($valDim, $pos);
+        $aux = $val_dim[$pos] ?? null;
 
         if ($aux === $baremo) {
             $count++;
         }
     }
+
     $porcentaje = ($count * 100) / $cantidad;
     $result = round($porcentaje, 0) . "%";
     return $result;

@@ -1,23 +1,30 @@
 <?php
 require_once 'funciones.php';
-$link = conectar();
+$link = conectar(); // Asegúrate de que esta función retorne un objeto PDO
 
 $id = $_GET['usuario'];
+$empresa_id = $_GET['empresa'];
 
-$sql = "SELECT
-*
-FROM
-    `aspirante`
-    INNER JOIN `cuestionario` 
-        ON (`aspirante`.`idAspirante` = `cuestionario`.`Aspirante_idAspirante`)
-        WHERE `Numero` = 1
-        AND aspirante.idAspirante = $id
-        AND aspirante.`Empresa_idEmpresa` = {$_GET['empresa']}";
+// Preparamos la consulta usando parámetros preparados para prevenir inyecciones SQL
+$sql = "SELECT *
+        FROM aspirante
+        INNER JOIN cuestionario 
+            ON aspirante.idAspirante = cuestionario.Aspirante_idAspirante
+        WHERE cuestionario.Numero = 1
+        AND aspirante.idAspirante = :id
+        AND aspirante.Empresa_idEmpresa = :empresa_id";
 
-$query = mysql_query($sql, $link);
+$stmt = $link->prepare($sql);
 
+// Bind de los parámetros
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->bindParam(':empresa_id', $empresa_id, PDO::PARAM_INT);
 
-while ($line = mysql_fetch_array($query)) {
+// Ejecutamos la consulta
+$stmt->execute();
+
+// Obtenemos los resultados y los mostramos
+while ($line = $stmt->fetch(PDO::FETCH_ASSOC)) {
     ?>
     <div id="resultados" class="row" style="page-break-before: always">
         <div class="col-sm-12 col-xs-12">
@@ -82,43 +89,42 @@ while ($line = mysql_fetch_array($query)) {
                 </div>
             </div>
             
-            
         </div>
     </div>
 
     <div class="row" id="recomendaciones" style="page-break-before: always">
-                        <div class="col-sm-12 col-xs-12">
-                            <div class="recuadro col-sm-12">
+        <div class="col-sm-12 col-xs-12">
+            <div class="recuadro col-sm-12">
 
-                                <div class="col-xs-12 text-center">
-                                    <center><h5 class="uppercase"><b>RECOMENDACIONES PARTICULARES</h5></center>
-                                    <div class="title-line-4 blue less-margin align-center"></div>
-                                </div>
+                <div class="col-xs-12 text-center">
+                    <center><h5 class="uppercase"><b>RECOMENDACIONES PARTICULARES</h5></center>
+                    <div class="title-line-4 blue less-margin align-center"></div>
+                </div>
 
-                                <textarea id="observacion" name="recomendaciones" class="col-sm-12 textarea"></textarea>
+                <textarea id="observacion" name="recomendaciones" class="col-sm-12 textarea"></textarea>
 
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label" for="inputDefault">Fecha de elaboración del informe</label>
-                                        <input type="text" class="form-control" required="" disabled=""  name="date" id="date">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <br>
-                                    <div class="col-sm-6">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button type="submit" class="btn btn-primary hvr-bob noprint">Guardar Informe</button>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <button type="button" onclick="window.print();return false;" class="noprint btn btn-primary hvr-bob">Imprimir Informe</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" for="inputDefault">Fecha de elaboración del informe</label>
+                        <input type="text" class="form-control" required="" disabled="" name="date" id="date">
                     </div>
+                </div>
+                <div class="col-sm-6">
+                    <br>
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary hvr-bob noprint">Guardar Informe</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" onclick="window.print();return false;" class="noprint btn btn-primary hvr-bob">Imprimir Informe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php
 }
 
-mysql_close($link);
-
+// Cerramos la conexión
+$link = null;
+?>

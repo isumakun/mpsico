@@ -2,214 +2,211 @@
 $title = '';
 require './header.php';
 require './funciones.php';
-error_reporting(0);
+error_reporting(E_ALL);
 ?>
 <style type="text/css" media="print">
-@page {
-    size: auto;
-    /* auto is the initial value */
-    margin-top: 0mm;
-    margin-bottom: 0mm;
-    /* this affects the margin in the printer settings */
-}
-
-@media print {
-
-    .col-sm-1,
-    .col-sm-2,
-    .col-sm-3,
-    .col-sm-4,
-    .col-sm-5,
-    .col-sm-6,
-    .col-sm-7,
-    .col-sm-8,
-    .col-sm-9,
-    .col-sm-10,
-    .col-sm-11,
-    .col-sm-12 {
-        float: left;
+    @page {
+        size: auto;
+        /* auto is the initial value */
+        margin-top: 0mm;
+        margin-bottom: 0mm;
+        /* this affects the margin in the printer settings */
     }
 
-    .col-sm-12 {
-        width: 100%;
+    @media print {
+
+        .col-sm-1,
+        .col-sm-2,
+        .col-sm-3,
+        .col-sm-4,
+        .col-sm-5,
+        .col-sm-6,
+        .col-sm-7,
+        .col-sm-8,
+        .col-sm-9,
+        .col-sm-10,
+        .col-sm-11,
+        .col-sm-12 {
+            float: left;
+        }
+
+        .col-sm-12 {
+            width: 100%;
+        }
+
+        .col-sm-11 {
+            width: 91.66666666666666%;
+        }
+
+        .col-sm-10 {
+            width: 83.33333333333334%;
+        }
+
+        .col-sm-9 {
+            width: 75%;
+        }
+
+        .col-sm-8 {
+            width: 66.66666666666666%;
+        }
+
+        .col-sm-7 {
+            width: 58.333333333333336%;
+        }
+
+        .col-sm-6 {
+            width: 50%;
+        }
+
+        .col-sm-5 {
+            width: 41.66666666666667%;
+        }
+
+        .col-sm-4 {
+            width: 33.33333333333333%;
+        }
+
+        .col-sm-3 {
+            width: 25%;
+        }
+
+        .col-sm-2 {
+            width: 16.666666666666664%;
+        }
+
+        .col-sm-1 {
+            width: 8.333333333333332%;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            background-image: none;
+            color: #000000;
+            font-size: 10px
+        }
+
+        #footer {
+            display: none;
+        }
+
+        #header {
+            display: none;
+        }
+
+        #resultados {
+            padding-top: 60px
+        }
+
+        #interpretacion {
+            padding-top: 60px !important;
+        }
+
+        #recomendaciones {
+            padding-top: 20px
+        }
+
+        .noprint {
+            display: none
+        }
+
+        .sec-padding {
+            padding: 0px 0 20px 0;
+        }
+
+        .title-line-4 {
+            width: 34px;
+            height: 2px;
+            float: left;
+            padding: 0px;
+            margin: 0 auto 60px auto;
+            background-color: #161616;
+        }
+
+        h5 {
+            font-size: 12px !important;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            padding-bottom: 5px;
+        }
+
+        .form-control {
+            font-size: 10px;
+        }
+
+        #resultados3 {
+            padding-top: 30px;
+        }
+
+        .table>tbody>tr>td,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>td,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>thead>tr>th {
+            padding: 6px;
+            line-height: 1;
+        }
+    .feature-box-86 {
+        background-color: #3fc35f !important;
     }
 
-    .col-sm-11 {
-        width: 91.66666666666666%;
+    .bg-color-light {
+        background-color: #4ece6d !important;
     }
 
-    .col-sm-10 {
-        width: 83.33333333333334%;
+    .btn {
+        padding: 5px 10px;
     }
 
-    .col-sm-9 {
-        width: 75%;
+    .div-center {
+        margin: auto;
+        width: 40%;
     }
 
-    .col-sm-8 {
-        width: 66.66666666666666%;
+    .header-inner.two {
+        height: 130px;
     }
 
-    .col-sm-7 {
-        width: 58.333333333333336%;
+    .header-inner .title {
+        padding: 40px 0 0 0;
     }
 
-    .col-sm-6 {
-        width: 50%;
-    }
-
-    .col-sm-5 {
-        width: 41.66666666666667%;
-    }
-
-    .col-sm-4 {
-        width: 33.33333333333333%;
-    }
-
-    .col-sm-3 {
-        width: 25%;
-    }
-
-    .col-sm-2 {
-        width: 16.666666666666664%;
-    }
-
-    .col-sm-1 {
-        width: 8.333333333333332%;
-    }
-
-    body {
-        background-color: #FFFFFF;
-        background-image: none;
-        color: #000000;
-        font-size: 10px
-    }
-
-    #footer {
-        display: none;
-    }
-
-    #header {
-        display: none;
-    }
-
-    #resultados {
-        padding-top: 60px
+    .red-font {
+        color: red;
+        font-weight: bold;
     }
 
     #interpretacion {
-        padding-top: 60px !important;
-    }
-
-    #recomendaciones {
-        padding-top: 20px
-    }
-
-    .noprint {
-        display: none
+        padding-top: 160px !important;
     }
 
     .sec-padding {
-        padding: 0px 0 20px 0;
+        padding: 50px 0 80px 0;
     }
 
-    .title-line-4 {
-        width: 34px;
-        height: 2px;
-        float: left;
-        padding: 0px;
-        margin: 0 auto 60px auto;
-        background-color: #161616;
+    .recuadro {
+        border: 2px solid #000000;
+        text-align: justify;
+        padding: 10px;
+        font-weight: normal;
     }
 
-    h5 {
-        font-size: 12px !important;
+    .textarea {
+        height: 200px;
     }
 
-    .form-group {
-        margin-bottom: 5px;
+    .textarea2 {
+        height: 150px;
     }
 
-    .form-group {
-        padding-bottom: 5px;
+    .padding-up {
+        padding-top: 50px;
     }
-
-    .form-control {
-        font-size: 10px;
-    }
-
-    #resultados3 {
-        padding-top: 30px;
-    }
-
-    .table>tbody>tr>td,
-    .table>tbody>tr>th,
-    .table>tfoot>tr>td,
-    .table>tfoot>tr>th,
-    .table>thead>tr>td,
-    .table>thead>tr>th {
-        padding: 6px;
-        line-height: 1;
-    }
-</style>
-
-<style>
-.feature-box-86 {
-    background-color: #3fc35f !important;
-}
-
-.bg-color-light {
-    background-color: #4ece6d !important;
-}
-
-.btn {
-    padding: 5px 10px;
-}
-
-.div-center {
-    margin: auto;
-    width: 40%;
-}
-
-.header-inner.two {
-    height: 130px;
-}
-
-.header-inner .title {
-    padding: 40px 0 0 0;
-}
-
-.red-font {
-    color: red;
-    font-weight: bold;
-}
-
-#interpretacion {
-    padding-top: 160px !important;
-}
-
-.sec-padding {
-    padding: 50px 0 80px 0;
-}
-
-.recuadro {
-    border: 2px solid #000000;
-    text-align: justify;
-    padding: 10px;
-    font-weight: normal;
-}
-
-.textarea {
-    height: 200px;
-}
-
-.textarea2 {
-    height: 150px;
-}
-
-.padding-up {
-    padding-top: 50px;
-}
 </style>
 
 <div class="box box-primary">
@@ -223,20 +220,20 @@ error_reporting(0);
                     <center>
                         <h5>
                             <?php
-                                        if($_GET['numero']==1){
-                                            echo '<b>INFORME DE RESULTADOS DEL CUESTIONARIO PARA LA EVALUACIÓN
-                                                <br> DEL ESTRÉS - TERCERA VERSIÓN</b>';
-                                        }else if($_GET['numero']==2){
-                                            echo '<b>CUESTIONARIO DE FACTORES PSICOSOCIALES
-                                                            <br> EXTRALABORALES</b>';
-                                        }else if($_GET['numero']==3){
-                                            echo '<b>CUESTIONARIO DE FACTORES PSICOSOCIALES
-                                                    <br> INTRALABORALES FORMA A</b>';
-                                        }else if($_GET['numero']==4){
-                                            echo '<b>CUESTIONARIO DE FACTORES PSICOSOCIALES
-                                                    <br> INTRALABORALES FORMA B</b>';
-                                        }
-                                            ?>
+                                if($_GET['numero']==1){
+                                    echo '<b>INFORME DE RESULTADOS DEL CUESTIONARIO PARA LA EVALUACIÓN
+                                        <br> DEL ESTRÉS - TERCERA VERSIÓN</b>';
+                                }else if($_GET['numero']==2){
+                                    echo '<b>CUESTIONARIO DE FACTORES PSICOSOCIALES
+                                                    <br> EXTRALABORALES</b>';
+                                }else if($_GET['numero']==3){
+                                    echo '<b>CUESTIONARIO DE FACTORES PSICOSOCIALES
+                                            <br> INTRALABORALES FORMA A</b>';
+                                }else if($_GET['numero']==4){
+                                    echo '<b>CUESTIONARIO DE FACTORES PSICOSOCIALES
+                                            <br> INTRALABORALES FORMA B</b>';
+                                }
+                                    ?>
                         </h5>
                     </center>
                     <div class="title-line-4 blue less-margin align-center"></div>
@@ -299,18 +296,18 @@ error_reporting(0);
             </div>
 
             <?php
-                            if (isset($_GET['numero'])) {
-                                if ($_GET['numero'] == 1) {
-                                    require './informes/informeCuest1.php';
-                                } else if ($_GET['numero'] == 2) {
-                                    require './informes/informeCuest2.php';
-                                } else if ($_GET['numero'] == 3) {
-                                    require './informes/informeCuest3.php';
-                                } else if ($_GET['numero'] == 4) {
-                                    require './informes/informeCuest4.php';
-                                }
-                            }
-                            ?>
+                if (isset($_GET['numero'])) {
+                    if ($_GET['numero'] == 1) {
+                        require './informes/informeCuest1.php';
+                    } else if ($_GET['numero'] == 2) {
+                        require './informes/informeCuest2.php';
+                    } else if ($_GET['numero'] == 3) {
+                        require './informes/informeCuest3.php';
+                    } else if ($_GET['numero'] == 4) {
+                        require './informes/informeCuest4.php';
+                    }
+                }
+            ?>
             </section>
         </form>
 

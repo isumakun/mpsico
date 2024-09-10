@@ -1,5 +1,6 @@
 <?php
-function conectar() {
+function conectar()
+{
     try {
         $pdo = new PDO('mysql:host=localhost;dbname=mpsico', 'master', '310.310.');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -9,7 +10,8 @@ function conectar() {
     }
 }
 
-function getLink() {
+function getLink()
+{
     $pdo = conectar();
     $sql = "SELECT link FROM prueba WHERE idPrueba = :id";
     $stmt = $pdo->prepare($sql);
@@ -19,27 +21,22 @@ function getLink() {
     return $r;
 }
 
-function getCuestionarioRealizado($user, $c) {
+function getCuestionarioRealizado($user, $c)
+{
     $link = conectar();
-    
+
     try {
         $date = date('Y');
         $idasp = getIDByUser($user);
 
-        // Usar placeholders para evitar inyecciones SQL
         $sql = "SELECT numero FROM cuestionario 
-                WHERE Aspirante_idAspirante = :idasp
-                AND numero = :numero
-                AND fecha LIKE :date";
-                
+                WHERE Aspirante_idAspirante = $idasp
+                AND numero = $c
+                AND fecha LIKE '%$date%'";
+
         $stmt = $link->prepare($sql);
-        $res = $stmt->execute([
-            ':idasp' => $idasp,
-            ':numero' => $c,
-            ':date' => "%$date%"
-        ]);
-        
-        // Verificar si se obtienen resultados
+        $res = $stmt->execute();
+
         if ($stmt->rowCount() > 0) {
             return true;
         } else {
@@ -52,7 +49,8 @@ function getCuestionarioRealizado($user, $c) {
 }
 
 
-function getIDByUser($usuario) {
+function getIDByUser($usuario)
+{
     $pdo = conectar();
     $sql = "SELECT idAspirante FROM aspirante WHERE Cedula = :cedula ORDER BY idAspirante DESC LIMIT 1";
     $stmt = $pdo->prepare($sql);
@@ -61,7 +59,8 @@ function getIDByUser($usuario) {
     return $idUser;
 }
 
-function getConsentimiento($usuario) {
+function getConsentimiento($usuario)
+{
     $pdo = conectar();
     $sql = "SELECT consentimiento FROM usuario WHERE usuario = :usuario ORDER BY idUsuario DESC LIMIT 1";
     $stmt = $pdo->prepare($sql);
@@ -70,7 +69,8 @@ function getConsentimiento($usuario) {
     return $r == 1 ? 'true' : 'false';
 }
 
-function getNumeroAspirantes($empresa, $area) {
+function getNumeroAspirantes($empresa, $area)
+{
     $pdo = conectar();
     $sql = "SELECT COUNT(DISTINCT ft.idFichaTrabajo)
             FROM fichapersonal AS fp
@@ -97,17 +97,19 @@ function getNumeroAspirantes($empresa, $area) {
     return $stmt->fetchColumn();
 }
 
-function getEmpresas($empresas) {
+function getEmpresas($empresas)
+{
     $pdo = conectar();
     $placeholders = implode(',', array_fill(0, count($empresas), '?'));
     $sql = "SELECT COUNT(*) FROM empresa AS e WHERE e.idEmpresa IN ($placeholders)";
-    
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($empresas);
     return $stmt->fetchColumn();
 }
 
-function getFichaTecnica($empresa, $area) {
+function getFichaTecnica($empresa, $area)
+{
     $pdo = conectar();
     $sql = "SELECT *
             FROM fichapersonal AS fp
@@ -118,7 +120,7 @@ function getFichaTecnica($empresa, $area) {
             INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante";
 
     $params = [];
-    
+
     if ($empresa != 'all') {
         $placeholders = implode(',', array_fill(0, count($empresa), '?'));
         $sql .= " WHERE e.idEmpresa IN ($placeholders)";
@@ -131,14 +133,15 @@ function getFichaTecnica($empresa, $area) {
     }
 
     $sql .= " GROUP BY a.idAspirante";
-    
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    
+
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getByIntralaboral($baremo, $empresa, $area, $forma) {
+function getByIntralaboral($baremo, $empresa, $area, $forma)
+{
     $pdo = conectar();
     $sql = "SELECT *
             FROM fichatrabajo AS ft
@@ -149,7 +152,7 @@ function getByIntralaboral($baremo, $empresa, $area, $forma) {
             WHERE c.Numero = :numero AND c.BaremoPTC = :baremo";
 
     $params = ['baremo' => $baremo, 'numero' => $forma == 'A' ? 3 : 4];
-    
+
     if ($empresa != 'all') {
         $placeholders = implode(',', array_fill(0, count($empresa), '?'));
         $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
@@ -162,14 +165,15 @@ function getByIntralaboral($baremo, $empresa, $area, $forma) {
     }
 
     $sql .= " GROUP BY ft.idFichaTrabajo";
-    
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    
+
     return $stmt->rowCount();
 }
 
-function getByExtralaboral($baremo, $empresa, $area) {
+function getByExtralaboral($baremo, $empresa, $area)
+{
     $pdo = conectar();
     $sql = "SELECT *
             FROM fichatrabajo AS ft
@@ -193,15 +197,16 @@ function getByExtralaboral($baremo, $empresa, $area) {
     }
 
     $sql .= " GROUP BY ft.idFichaTrabajo";
-    
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    
+
     return $stmt->rowCount();
 }
 
 
-function getByEstres($baremo, $empresa, $area) {
+function getByEstres($baremo, $empresa, $area)
+{
     $pdo = conectar();
     $sql = "SELECT *
             FROM fichatrabajo AS ft
@@ -224,7 +229,7 @@ function getByEstres($baremo, $empresa, $area) {
         $sql .= " AND ar.idArea = ?";
         $params[] = $area;
     }
-    
+
     $sql .= " GROUP BY ft.idFichaTrabajo";
 
     $stmt = $pdo->prepare($sql);
@@ -233,7 +238,8 @@ function getByEstres($baremo, $empresa, $area) {
     return $stmt->rowCount();
 }
 
-function setColorDim($valor, $i, $forma) {
+function setColorDim($valor, $i, $forma)
+{
     //return '<td>'.$valor.'</td>';
 
     if ($forma == "A") {
@@ -255,7 +261,8 @@ function setColorDim($valor, $i, $forma) {
     }
 }
 
-function setColorDimension($array, $cantidad) {
+function setColorDimension($array, $cantidad)
+{
 
     $result = calculateDim($array, $cantidad);
 
@@ -269,12 +276,13 @@ function setColorDimension($array, $cantidad) {
         return '<td class="level4">A</td>';
     } else if ($result == "Riesgo muy alto") {
         return '<td class="level5">MA</td>';
-    }else{
+    } else {
         return $result;
     }
 }
 
-function setColorDominio($array, $cantidad) {
+function setColorDominio($array, $cantidad)
+{
 
     $result = calculateDom($array, $cantidad);
 
@@ -291,125 +299,126 @@ function setColorDominio($array, $cantidad) {
     }
 }
 
-function calculateDim($array, $cantidad, $test=0){
+function calculateDim($array, $cantidad, $test = 0)
+{
     $array_count = array_count_values($array);
-    if ($test==1) {
+    if ($test == 1) {
         var_dump($array);
         echo "Impreso";
     }
     $cNo = $array_count['Sin riesgo o riesgo despreciable'];
-    if ($cNo == '') 
+    if ($cNo == '')
         $cNo = 0;
     $cBajo = $array_count['Riesgo bajo'];
-    if ($cBajo == '') 
+    if ($cBajo == '')
         $cBajo = 0;
     $cMedio = $array_count['Riesgo medio'];
-    if ($cMedio == '') 
+    if ($cMedio == '')
         $cMedio = 0;
     $cAlto = $array_count['Riesgo alto'];
-    if ($cAlto == '') 
+    if ($cAlto == '')
         $cAlto = 0;
     $cMAlto = $array_count['Riesgo muy alto'];
-    if ($cMAlto == '') 
+    if ($cMAlto == '')
         $cMAlto = 0;
-    
+
 
     if ($cNo == $cantidad)
-       return 'Sin riesgo o riesgo despreciable';
+        return 'Sin riesgo o riesgo despreciable';
 
     if ($cBajo == $cantidad)
-       return 'Riesgo bajo';
+        return 'Riesgo bajo';
 
     if ($cMedio == $cantidad)
-       return 'Riesgo medio';
+        return 'Riesgo medio';
 
     if ($cAlto == $cantidad)
-       return 'Riesgo alto';
+        return 'Riesgo alto';
 
     if ($cMAlto == $cantidad)
-       return 'Riesgo muy alto';
+        return 'Riesgo muy alto';
 
 
- $rango1 = (($cNo+$cBajo)*100)/$cantidad;
- $rango2 = (($cMedio+$cAlto+$cMAlto)*100)/$cantidad;
+    $rango1 = (($cNo + $cBajo) * 100) / $cantidad;
+    $rango2 = (($cMedio + $cAlto + $cMAlto) * 100) / $cantidad;
 
-if ($rango1<=100 && $rango1>=81) {
-    return 'Sin riesgo o riesgo despreciable';
-}elseif ($rango1<=80 && $rango1>=50) {
-    return 'Riesgo bajo';
-}elseif ($rango2<=60 && $rango2>=51) {
-    return 'Riesgo medio';
-}elseif ($rango2<=80 && $rango2>=61) {
-    return 'Riesgo alto';
-}elseif ($rango2<=100 && $rango2>=81) {
-    return 'Riesgo muy alto';
-}else{
-    return 'Riesgo medio';
+    if ($rango1 <= 100 && $rango1 >= 81) {
+        return 'Sin riesgo o riesgo despreciable';
+    } elseif ($rango1 <= 80 && $rango1 >= 50) {
+        return 'Riesgo bajo';
+    } elseif ($rango2 <= 60 && $rango2 >= 51) {
+        return 'Riesgo medio';
+    } elseif ($rango2 <= 80 && $rango2 >= 61) {
+        return 'Riesgo alto';
+    } elseif ($rango2 <= 100 && $rango2 >= 81) {
+        return 'Riesgo muy alto';
+    } else {
+        return 'Riesgo medio';
+    }
 }
 
-}
-
-function calculateDom($array, $cantidad){
+function calculateDom($array, $cantidad)
+{
     $array_count = array_count_values($array);
 
     $cNo = $array_count['Sin riesgo o riesgo despreciable'];
-    if ($cNo == '') 
+    if ($cNo == '')
         $cNo = 0;
     $cBajo = $array_count['Riesgo bajo'];
-    if ($cBajo == '') 
+    if ($cBajo == '')
         $cBajo = 0;
     $cMedio = $array_count['Riesgo medio'];
-    if ($cMedio == '') 
+    if ($cMedio == '')
         $cMedio = 0;
     $cAlto = $array_count['Riesgo alto'];
-    if ($cAlto == '') 
+    if ($cAlto == '')
         $cAlto = 0;
     $cMAlto = $array_count['Riesgo muy alto'];
-    if ($cMAlto == '') 
+    if ($cMAlto == '')
         $cMAlto = 0;
 
     //return $cNo.' - '.$cBajo.' - '.$cMedio.' - '.$cAlto.' - '.$cMAlto;
 
- if ($cNo == $cantidad)
-     return 'Sin riesgo o riesgo despreciable';
+    if ($cNo == $cantidad)
+        return 'Sin riesgo o riesgo despreciable';
 
- if ($cBajo == $cantidad)
-     return 'Riesgo bajo';
+    if ($cBajo == $cantidad)
+        return 'Riesgo bajo';
 
- if ($cMedio == $cantidad)
-     return 'Riesgo medio';
+    if ($cMedio == $cantidad)
+        return 'Riesgo medio';
 
- if ($cAlto == $cantidad)
-     return 'Riesgo alto';
+    if ($cAlto == $cantidad)
+        return 'Riesgo alto';
 
- if ($cMAlto == $cantidad)
-     return 'Riesgo muy alto';
+    if ($cMAlto == $cantidad)
+        return 'Riesgo muy alto';
 
 
- $rango1 = (($cNo+$cBajo)*100)/$cantidad;
- $rango2 = (($cMedio+$cAlto+$cMAlto)*100)/$cantidad;
+    $rango1 = (($cNo + $cBajo) * 100) / $cantidad;
+    $rango2 = (($cMedio + $cAlto + $cMAlto) * 100) / $cantidad;
 
-if ($rango1<=100 && $rango1>=81) {
-    return 'Sin riesgo o riesgo despreciable';
+    if ($rango1 <= 100 && $rango1 >= 81) {
+        return 'Sin riesgo o riesgo despreciable';
+    }
+    if ($rango1 <= 80 && $rango1 > 50) {
+        return 'Riesgo bajo';
+    }
+    if ($rango2 <= 60 && $rango2 >= 51) {
+        return 'Riesgo medio';
+    }
+    if ($rango2 <= 80 && $rango2 >= 61) {
+        return 'Riesgo alto';
+    }
+    if ($rango2 <= 100 && $rango2 >= 81) {
+        return 'Riesgo muy alto';
+    }
+
+    return 'Riesgo medio';
 }
-if ($rango1<=80 && $rango1>50) {
- return 'Riesgo bajo';
-}
-if ($rango2<=60 && $rango2>=51) {
- return 'Riesgo medio';
-}
-if ($rango2<=80 && $rango2>=61) {
- return 'Riesgo alto';
-}
-if ($rango2<=100 && $rango2>=81) {
-    return 'Riesgo muy alto';
-}
 
-return 'Riesgo medio';
-
-}
-
-function setColorExtraTotal($valor) {
+function setColorExtraTotal($valor)
+{
 
     $result = baremosTotalExtra($valor);
 
@@ -426,7 +435,8 @@ function setColorExtraTotal($valor) {
     }
 }
 
-function setColorDom($valor, $i, $forma) {
+function setColorDom($valor, $i, $forma)
+{
     if ($forma == "A") {
         $result = baremosDominiosFormaA($valor, $i);
     } else {
@@ -446,7 +456,8 @@ function setColorDom($valor, $i, $forma) {
     }
 }
 
-function getEmpresaUsuario() {
+function getEmpresaUsuario()
+{
     $pdo = conectar();
 
     $sql = "SELECT e.idEmpresa
@@ -463,7 +474,8 @@ function getEmpresaUsuario() {
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-function getForma($user, $forma) {
+function getForma($user, $forma)
+{
     $pdo = conectar();
     $idasp = getIDByUser($user);
 
@@ -482,7 +494,8 @@ function getForma($user, $forma) {
     return $stmt->rowCount() > 0;
 }
 
-function getCuestionarioRealizadoString() {
+function getCuestionarioRealizadoString()
+{
     $pdo = conectar();
 
     $sql = "SELECT numero
@@ -500,7 +513,8 @@ function getCuestionarioRealizadoString() {
     return $return;
 }
 
-function validarFicha($user) {
+function validarFicha($user)
+{
     $pdo = conectar();
 
     $sql = "SELECT *
@@ -519,19 +533,22 @@ function validarFicha($user) {
     return $stmt->rowCount() > 0;
 }
 
-function transformarForma($puntaje, $factor) {
+function transformarForma($puntaje, $factor)
+{
     $nuevoPuntaje = ($puntaje / $factor) * 100;
     $resultado = round($nuevoPuntaje, 1);
     return $resultado;
 }
 
-function transformarInversaExtra($puntaje, $factor) {
+function transformarInversaExtra($puntaje, $factor)
+{
     $nuevoPuntaje = ($puntaje * $factor) / 100;
     $resultado = round($nuevoPuntaje, 1);
     return $resultado;
 }
 
-function baremosTotalFormaA($valor) {
+function baremosTotalFormaA($valor)
+{
     $baremos = [0, 19.8, 25.9, 31.6, 38.1, 100];
 
     if (($valor == $baremos[0]) || ($valor < $baremos[1])) {
@@ -547,7 +564,8 @@ function baremosTotalFormaA($valor) {
     }
 }
 
-function baremosTotalFormaB($valor) {
+function baremosTotalFormaB($valor)
+{
     $baremos = [0, 20.7, 26.1, 31.3, 38.8, 100];
 
     if (($valor == $baremos[0]) || ($valor < $baremos[1])) {
@@ -563,7 +581,8 @@ function baremosTotalFormaB($valor) {
     }
 }
 
-function baremosDimensionesFormaA($valor, $i) {
+function baremosDimensionesFormaA($valor, $i)
+{
     $baremosD[0] = [0, 3.9, 15.5, 30.9, 46.3, 100];
     $baremosD[1] = [0, 5.5, 16.2, 25.1, 37.6, 100];
     $baremosD[2] = [0, 10.1, 25.1, 40.1, 55.1, 100];
@@ -597,7 +616,8 @@ function baremosDimensionesFormaA($valor, $i) {
     }
 }
 
-function baremosDimensionesFormaB($valor, $i) {
+function baremosDimensionesFormaB($valor, $i)
+{
     $baremosD[0] = [0, 3.9, 13.6, 25.1, 38.6, 100];
     $baremosD[1] = [0, 6.4, 14.7, 27.2, 37.6, 100];
     $baremosD[2] = [0, 5.1, 20.1, 30.1, 50.1, 100];
@@ -628,7 +648,8 @@ function baremosDimensionesFormaB($valor, $i) {
     }
 }
 
-function baremosDimensionesExtraJefe($valor) {
+function baremosDimensionesExtraJefe($valor)
+{
     $baremosD[0] = [0, 6.4, 25, 37.6, 50, 100];
     $baremosD[1] = [0, 8.4, 25, 33.4, 50, 100];
     $baremosD[2] = [0, 1, 10, 20.1, 30, 100];
@@ -652,7 +673,8 @@ function baremosDimensionesExtraJefe($valor) {
     }
 }
 
-function baremosPTCExtraJefe($valor) {
+function baremosPTCExtraJefe($valor)
+{
     $baremosD = [0, 11.4, 16.9, 22.7, 29, 100];
 
     if (($valor == $baremosD[0]) || ($valor < $baremosD[1])) {
@@ -668,7 +690,8 @@ function baremosPTCExtraJefe($valor) {
     }
 }
 
-function baremosDimensionesExtraAux($valor) {
+function baremosDimensionesExtraAux($valor)
+{
     $baremosD[0] = [0, 6.4, 25, 37.6, 50, 100];
     $baremosD[1] = [0, 8.4, 25, 33.4, 50, 100];
     $baremosD[2] = [0, 5.1, 15, 25.1, 35, 100];
@@ -692,7 +715,8 @@ function baremosDimensionesExtraAux($valor) {
     }
 }
 
-function baremosPTCExtraAux($valor) {
+function baremosPTCExtraAux($valor)
+{
     $baremosD = [0, 13, 17.7, 24.3, 32.3, 100];
     if (($valor == $baremosD[0]) || ($valor < $baremosD[1])) {
         return 'Sin riesgo o riesgo despreciable';
@@ -707,7 +731,8 @@ function baremosPTCExtraAux($valor) {
     }
 }
 
-function baremosTotalExtra($valor) {
+function baremosTotalExtra($valor)
+{
     $baremosD = [0, 18.9, 24.4, 29.6, 35.4, 100];
     if (($valor == $baremosD[0]) || ($valor < $baremosD[1])) {
         return 'Sin riesgo o riesgo despreciable';
@@ -722,7 +747,8 @@ function baremosTotalExtra($valor) {
     }
 }
 
-function baremosDominiosFormaA($valor, $i) {
+function baremosDominiosFormaA($valor, $i)
+{
     $baremosD[0] = [0, 9.2, 17.8, 25.7, 34.9, 100];
     $baremosD[1] = [0, 10.8, 19.1, 29.9, 40.6, 100];
     $baremosD[2] = [0, 28.6, 35.1, 41.6, 47.6, 100];
@@ -741,7 +767,8 @@ function baremosDominiosFormaA($valor, $i) {
     }
 }
 
-function baremosDominiosFormaB($valor, $i) {
+function baremosDominiosFormaB($valor, $i)
+{
     $baremosD[0] = [0, 8.4, 17.6, 26.8, 38.4, 100];
     $baremosD[1] = [0, 19.5, 26.5, 34.8, 43.2, 100];
     $baremosD[2] = [0, 27, 33.4, 37.9, 44.3, 100];
@@ -760,7 +787,8 @@ function baremosDominiosFormaB($valor, $i) {
     }
 }
 
-function baremosPTCEstresJefe($valor) {
+function baremosPTCEstresJefe($valor)
+{
     $baremosD = [0, 7.9, 12.6, 17.8, 25, 100];
 
     if (($valor == $baremosD[0]) || ($valor < $baremosD[1])) {
@@ -776,7 +804,8 @@ function baremosPTCEstresJefe($valor) {
     }
 }
 
-function baremosPTCEstresAux($valor) {
+function baremosPTCEstresAux($valor)
+{
     $baremosD = [0, 6.6, 11.8, 17.1, 23.4, 100];
 
     if (($valor == $baremosD[0]) || ($valor < $baremosD[1])) {
@@ -791,4 +820,3 @@ function baremosPTCEstresAux($valor) {
         return 'Riesgo muy alto';
     }
 }
-?>
