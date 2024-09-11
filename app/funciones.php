@@ -301,24 +301,24 @@ function setColorDominio($array, $cantidad)
 
 function calculateDim($array, $cantidad, $test = 0)
 {
-    $array_count = array_count_values($array);
+    $array_count = is_array($array) ? array_count_values($array) : [];
     if ($test == 1) {
         var_dump($array);
         echo "Impreso";
     }
-    $cNo = $array_count['Sin riesgo o riesgo despreciable'];
+    $cNo = isset($array_count['Sin riesgo o riesgo despreciable']) ? $array_count['Sin riesgo o riesgo despreciable'] : 0;
     if ($cNo == '')
         $cNo = 0;
-    $cBajo = $array_count['Riesgo bajo'];
+    $cBajo = isset($array_count['Riesgo bajo']) ? $array_count['Riesgo bajo'] : 0;
     if ($cBajo == '')
         $cBajo = 0;
-    $cMedio = $array_count['Riesgo medio'];
+    $cMedio = isset($array_count['Riesgo medio']) ? $array_count['Riesgo medio'] : 0;
     if ($cMedio == '')
         $cMedio = 0;
-    $cAlto = $array_count['Riesgo alto'];
+    $cAlto = isset($array_count['Riesgo alto']) ? $array_count['Riesgo alto'] : 0;
     if ($cAlto == '')
         $cAlto = 0;
-    $cMAlto = $array_count['Riesgo muy alto'];
+    $cMAlto = isset($array_count['Riesgo muy alto']) ? $array_count['Riesgo muy alto'] : 0;
     if ($cMAlto == '')
         $cMAlto = 0;
 
