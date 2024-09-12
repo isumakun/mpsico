@@ -16,59 +16,59 @@
     
     <tr>
         <td>Tiempo fuera del Trabajo</td>
-        <td><?php echo getNumero(0, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(0, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(0, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(0, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(0, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(0, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(0, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(0, "Riesgo medio"); ?></td>
+        <td><?= get_numero(0, "Riesgo alto"); ?></td>
+        <td><?= get_numero(0, "Riesgo muy alto"); ?></td>
     </tr>
     <tr>
         <td>Relaciones familiares</td>
-        <td><?php echo getNumero(1, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(1, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(1, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(1, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(1, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(1, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(1, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(1, "Riesgo medio"); ?></td>
+        <td><?= get_numero(1, "Riesgo alto"); ?></td>
+        <td><?= get_numero(1, "Riesgo muy alto"); ?></td>
     </tr>
     <tr>
         <td>Comunicación y relaciones interpersonales</td>
-        <td><?php echo getNumero(2, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(2, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(2, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(2, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(2, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(2, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(2, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(2, "Riesgo medio"); ?></td>
+        <td><?= get_numero(2, "Riesgo alto"); ?></td>
+        <td><?= get_numero(2, "Riesgo muy alto"); ?></td>
     </tr>
     <tr>
         <td>Situación económica del grupo familiar</td>
-        <td><?php echo getNumero(3, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(3, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(3, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(3, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(3, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(3, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(3, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(3, "Riesgo medio"); ?></td>
+        <td><?= get_numero(3, "Riesgo alto"); ?></td>
+        <td><?= get_numero(3, "Riesgo muy alto"); ?></td>
     </tr>
     <tr>
         <td>Características de la vivienda y su entorno</td>
-        <td><?php echo getNumero(4, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(4, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(4, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(4, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(4, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(4, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(4, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(4, "Riesgo medio"); ?></td>
+        <td><?= get_numero(4, "Riesgo alto"); ?></td>
+        <td><?= get_numero(4, "Riesgo muy alto"); ?></td>
     </tr>
     <tr>
         <td>Influencia del entorno Extra laboral sobre el trabajo</td>
-        <td><?php echo getNumero(5, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(5, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(5, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(5, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(5, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(5, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(5, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(5, "Riesgo medio"); ?></td>
+        <td><?= get_numero(5, "Riesgo alto"); ?></td>
+        <td><?= get_numero(5, "Riesgo muy alto"); ?></td>
     </tr>
     <tr>
         <td>Desplazamiento vivienda-trabajo-vivienda</td>
-        <td><?php echo getNumero(6, "Sin riesgo o riesgo despreciable"); ?></td>
-        <td><?php echo getNumero(6, "Riesgo bajo"); ?></td>
-        <td><?php echo getNumero(6, "Riesgo medio"); ?></td>
-        <td><?php echo getNumero(6, "Riesgo alto"); ?></td>
-        <td><?php echo getNumero(6, "Riesgo muy alto"); ?></td>
+        <td><?= get_numero(6, "Sin riesgo o riesgo despreciable"); ?></td>
+        <td><?= get_numero(6, "Riesgo bajo"); ?></td>
+        <td><?= get_numero(6, "Riesgo medio"); ?></td>
+        <td><?= get_numero(6, "Riesgo alto"); ?></td>
+        <td><?= get_numero(6, "Riesgo muy alto"); ?></td>
     </tr>
 </table>
 

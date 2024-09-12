@@ -1,5 +1,4 @@
 <?php
-require_once '../funciones.php';
 
 $link = conectar();
 
@@ -76,6 +75,3 @@ $aux = 1;
         ?>
     </table>
 </div>
-<?php
-$link->close();
-?>

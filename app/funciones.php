@@ -81,15 +81,13 @@ function getNumeroAspirantes($empresa, $area)
             WHERE 1=1";
 
     $params = [];
-    if ($empresa != 'all') {
-        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
-        $sql .= " AND e.idEmpresa IN ($placeholders)";
-        $params = array_merge($params, $empresa);
+    if ($empresa !== 'all') {
+        $in_empresas = implode(',', array_map('intval', $empresa));
+        $sql .= " AND e.idEmpresa IN ($in_empresas)";
     }
-
-    if ($area != 'all') {
-        $sql .= " AND ar.idArea = ?";
-        $params[] = $area;
+    
+    if ($area !== 'all') {
+        $sql .= " AND ar.idArea = $area";
     }
 
     $stmt = $pdo->prepare($sql);
@@ -121,15 +119,13 @@ function getFichaTecnica($empresa, $area)
 
     $params = [];
 
-    if ($empresa != 'all') {
-        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
-        $sql .= " WHERE e.idEmpresa IN ($placeholders)";
-        $params = array_merge($params, $empresa);
+    if ($empresa !== 'all') {
+        $in_empresas = implode(',', array_map('intval', $empresa));
+        $sql .= " AND e.idEmpresa IN ($in_empresas)";
     }
-
-    if ($area != 'all') {
-        $sql .= " AND ar.idArea = ?";
-        $params[] = $area;
+    
+    if ($area !== 'all') {
+        $sql .= " AND ar.idArea = $area";
     }
 
     $sql .= " GROUP BY a.idAspirante";
@@ -153,15 +149,13 @@ function getByIntralaboral($baremo, $empresa, $area, $forma)
 
     $params = ['baremo' => $baremo, 'numero' => $forma == 'A' ? 3 : 4];
 
-    if ($empresa != 'all') {
-        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
-        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
-        $params = array_merge($params, $empresa);
+    if ($empresa !== 'all') {
+        $in_empresas = implode(',', array_map('intval', $empresa));
+        $sql .= " AND e.idEmpresa IN ($in_empresas)";
     }
-
-    if ($area != 'all') {
-        $sql .= " AND ar.idArea = ?";
-        $params[] = $area;
+    
+    if ($area !== 'all') {
+        $sql .= " AND ar.idArea = $area";
     }
 
     $sql .= " GROUP BY ft.idFichaTrabajo";
@@ -185,15 +179,13 @@ function getByExtralaboral($baremo, $empresa, $area)
 
     $params = ['baremo' => $baremo];
 
-    if ($empresa != 'all') {
-        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
-        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
-        $params = array_merge($params, $empresa);
+    if ($empresa !== 'all') {
+        $in_empresas = implode(',', array_map('intval', $empresa));
+        $sql .= " AND e.idEmpresa IN ($in_empresas)";
     }
-
-    if ($area != 'all') {
-        $sql .= " AND ar.idArea = ?";
-        $params[] = $area;
+    
+    if ($area !== 'all') {
+        $sql .= " AND ar.idArea = $area";
     }
 
     $sql .= " GROUP BY ft.idFichaTrabajo";
@@ -219,15 +211,13 @@ function getByEstres($baremo, $empresa, $area)
 
     $params = ['baremo' => $baremo];
 
-    if ($empresa != 'all') {
-        $placeholders = implode(',', array_fill(0, count($empresa), '?'));
-        $sql .= " AND ar.Empresa_idEmpresa IN ($placeholders)";
-        $params = array_merge($params, $empresa);
+    if ($empresa !== 'all') {
+        $in_empresas = implode(',', array_map('intval', $empresa));
+        $sql .= " AND e.idEmpresa IN ($in_empresas)";
     }
-
-    if ($area != 'all') {
-        $sql .= " AND ar.idArea = ?";
-        $params[] = $area;
+    
+    if ($area !== 'all') {
+        $sql .= " AND ar.idArea = $area";
     }
 
     $sql .= " GROUP BY ft.idFichaTrabajo";
