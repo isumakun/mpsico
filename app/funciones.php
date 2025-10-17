@@ -2,7 +2,7 @@
 function conectar()
 {
     try {
-        $pdo = new PDO('mysql:host=localhost;dbname=mpsico', 'master', '310.310.');
+        $pdo = new PDO('mysql:host=localhost;dbname=u133671249_mpsico', 'u133671249_mpsico_user', '&:QfG1eP');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     } catch (PDOException $e) {
@@ -251,10 +251,9 @@ function setColorDim($valor, $i, $forma)
     }
 }
 
-function setColorDimension($array, $cantidad)
+function setColorDimension($array, $cantidad, $debug=0)
 {
-
-    $result = calculateDim($array, $cantidad);
+    $result = calculateDim($array, $cantidad, $debug);
 
     if ($result == "Sin riesgo o riesgo despreciable") {
         return '<td class="level1">MB</td>';
@@ -293,7 +292,6 @@ function calculateDim($array, $cantidad, $test = 0)
 {
     $array_count = is_array($array) ? array_count_values($array) : [];
     if ($test == 1) {
-        var_dump($array);
         echo "Impreso";
     }
     $cNo = isset($array_count['Sin riesgo o riesgo despreciable']) ? $array_count['Sin riesgo o riesgo despreciable'] : 0;
@@ -328,9 +326,15 @@ function calculateDim($array, $cantidad, $test = 0)
     if ($cMAlto == $cantidad)
         return 'Riesgo muy alto';
 
-
     $rango1 = (($cNo + $cBajo) * 100) / $cantidad;
     $rango2 = (($cMedio + $cAlto + $cMAlto) * 100) / $cantidad;
+
+    if ($test == 1) {
+        /* echo '<pre>'.print_r($cantidad, TRUE).'</pre>'; 
+        echo '<pre>'.print_r($rango1, TRUE).'</pre>'; 
+        echo '<pre>'.print_r($rango2, TRUE).'</pre>'; die();
+        echo "Impreso"; */
+    }
 
     if ($rango1 <= 100 && $rango1 >= 81) {
         return 'Sin riesgo o riesgo despreciable';

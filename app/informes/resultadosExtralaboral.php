@@ -26,24 +26,25 @@ if ($area !== 'all') {
 $sql .= " GROUP BY ft.idFichaTrabajo";
 
 $stmt = $link->prepare($sql);
+$stmt->execute();
 
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$cantidad = !empty($result) ? count($result) : 0;
+$cantidad = !empty($results) ? count($results) : 0;
 
-$dim = array_fill(1, 7, []);
+$dim = array_fill(0, 6, []);
 
 foreach ($results as $line) {
     $sql2 = "SELECT dimension.Valor
              FROM dimension
              INNER JOIN cuestionario ON (dimension.Cuestionario_idCuestionario = cuestionario.idCuestionario)
              WHERE cuestionario.Aspirante_idAspirante = '{$line['idAspirante']}' AND Numero = 2";
-
+    
     $stmt2 = $link->prepare($sql2);
     $stmt2->execute();
     $result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($result2 as $row) {
-        $dim[count($dim)][] = $row[0];
+    foreach ($result2 as $key => $value) {
+        $dim[$key][] = $value['Valor'];
     }
 }
 
@@ -57,13 +58,13 @@ $aux = 1;
         </thead>
         <?php
         $dim_labels = [
-            1 => 'Tiempo fuera del Trabajo',
-            2 => 'Relaciones familiares',
-            3 => 'Comunicación y relaciones interpersonales',
-            4 => 'Situación económica del grupo familiar',
-            5 => 'Características de la vivienda y su entorno',
-            6 => 'Influencia del entorno Extra laboral sobre el trabajo',
-            7 => 'Desplazamiento vivienda-trabajo-vivienda'
+            0 => 'Tiempo fuera del Trabajo',
+            1 => 'Relaciones familiares',
+            2 => 'Comunicación y relaciones interpersonales',
+            3 => 'Situación económica del grupo familiar',
+            4 => 'Características de la vivienda y su entorno',
+            5 => 'Influencia del entorno Extra laboral sobre el trabajo',
+            6 => 'Desplazamiento vivienda-trabajo-vivienda'
         ];
 
         foreach ($dim_labels as $i => $label) {

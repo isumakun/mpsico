@@ -219,7 +219,11 @@ function get_numero_b($pos, $baremo) {
         }
     }
 
-    $porcentaje = ($count * 100) / $cantidad;
-    $result = round($porcentaje, 0) . "%";
-    return $result;
+    if ($cantidad == 0) {
+        return "0%";
+    }else{
+        $porcentaje = ($count * 100) / $cantidad;
+        $result = round($porcentaje, 0) . "%";
+        return $result;
+    }
 }

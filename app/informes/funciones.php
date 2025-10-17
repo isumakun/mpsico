@@ -222,9 +222,9 @@ function setColorDim($valor, $i, $forma) {
     }
 }
 
-function setColorDimension($array, $cantidad) {
+function setColorDimension($array, $cantidad, $debug=0) {
 
-    $result = calculateDim($array, $cantidad);
+    $result = calculateDim($array, $cantidad, $debug);
 
     if ($result == "Sin riesgo o riesgo despreciable") {
         return '<td class="level1">MB</td>';

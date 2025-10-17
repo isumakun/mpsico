@@ -24,9 +24,13 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
 $aspirantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$cantidad = count($aspirantes);
+$cantidad = !empty($aspirantes) ? count($aspirantes) : 0;
 
 $dimensions = array_fill(1, 16, []);
+$dom1 = array();
+$dom2 = array();
+$dom3 = array();
+$dom4 = array();
 
 foreach ($aspirantes as $line) {
     $sql3 = "SELECT dimension.Valor
@@ -40,12 +44,10 @@ foreach ($aspirantes as $line) {
         'numero' => 4
     ]);
 
-    $values = $stmt3->fetchAll(PDO::FETCH_COLUMN);
-
-    foreach ($values as $index => $value) {
-        if (isset($dimensions[$index + 1])) {
-            $dimensions[$index + 1][] = $value;
-        }
+    $res = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+    
+    foreach ($res as $key => $value) {
+        $dimensions[$key + 1][] = $value['Valor'];
     }
 }
 
@@ -64,20 +66,22 @@ $cont = 0;
             <tr>
                 <td rowspan="3">Liderazgo y relaciones sociales en el trabajo</td>
                 <td>Características del liderazgo</td>
-                <?php echo setColorDimension($dim[1], $cantidad);
-                    array_push($dom1, calculateDim($dim[1], $cantidad));
+                <?php 
+                    
+                    echo setColorDimension($dimensions[1], $cantidad);
+                    array_push($dom1, calculateDim($dimensions[1], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Relaciones sociales en el trabajo</td>
-                <?php echo setColorDimension($dim[2], $cantidad);
-                    array_push($dom1, calculateDim($dim[2], $cantidad));
+                <?php echo setColorDimension($dimensions[2], $cantidad);
+                    array_push($dom1, calculateDim($dimensions[2], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Retroalimentación del desempeño</td>
-                <?php echo setColorDimension($dim[3], $cantidad);
-                    array_push($dom1, calculateDim($dim[3], $cantidad));
+                <?php echo setColorDimension($dimensions[3], $cantidad);
+                    array_push($dom1, calculateDim($dimensions[3], $cantidad));
                 ?>
             </tr>
             <tr>
@@ -87,32 +91,32 @@ $cont = 0;
             <tr>
                 <td rowspan="5">Control sobre el trabajo</td>
                 <td>Claridad de rol</td>
-                <?php echo setColorDimension($dim[4], $cantidad);
-                    array_push($dom2, calculateDim($dim[4], $cantidad));
+                <?php echo setColorDimension($dimensions[4], $cantidad);
+                    array_push($dom2, calculateDim($dimensions[4], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Capacitación</td>
-                <?php echo setColorDimension($dim[5], $cantidad);
-                    array_push($dom2, calculateDim($dim[5], $cantidad));
+                <?php echo setColorDimension($dimensions[5], $cantidad);
+                    array_push($dom2, calculateDim($dimensions[5], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Participación y manejo del cambio</td>
-                <?php echo setColorDimension($dim[6], $cantidad);
-                    array_push($dom2, calculateDim($dim[6], $cantidad));
+                <?php echo setColorDimension($dimensions[6], $cantidad);
+                    array_push($dom2, calculateDim($dimensions[6], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Oportunidades para el uso y desarrollo de habilidades y conocimientos</td>
-                <?php echo setColorDimension($dim[7], $cantidad);
-                    array_push($dom2, calculateDim($dim[7], $cantidad));
+                <?php echo setColorDimension($dimensions[7], $cantidad);
+                    array_push($dom2, calculateDim($dimensions[7], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Control y autonomía sobre el trabajo</td>
-                <?php echo setColorDimension($dim[8], $cantidad);
-                    array_push($dom2, calculateDim($dim[8], $cantidad));
+                <?php echo setColorDimension($dimensions[8], $cantidad);
+                    array_push($dom2, calculateDim($dimensions[8], $cantidad));
                 ?>
             </tr>
             <tr>
@@ -122,38 +126,38 @@ $cont = 0;
             <tr>
                 <td rowspan="6">Demandas del trabajo</td>
                 <td>Demandas ambientales y de esfuerzo físico</td>
-                <?php echo setColorDimension($dim[9], $cantidad);
-                    array_push($dom3, calculateDim($dim[9], $cantidad));
+                <?php echo setColorDimension($dimensions[9], $cantidad);
+                    array_push($dom3, calculateDim($dimensions[9], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Demandas emocionales</td>
-                <?php echo setColorDimension($dim[10], $cantidad);
-                    array_push($dom3, calculateDim($dim[10], $cantidad));
+                <?php echo setColorDimension($dimensions[10], $cantidad);
+                    array_push($dom3, calculateDim($dimensions[10], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Demandas cuantitativas</td>
-                <?php echo setColorDimension($dim[11], $cantidad);
-                    array_push($dom3, calculateDim($dim[11], $cantidad));
+                <?php echo setColorDimension($dimensions[11], $cantidad);
+                    array_push($dom3, calculateDim($dimensions[11], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Influencia del trabajo sobre el entorno extralaboral</td>
-                <?php echo setColorDimension($dim[12], $cantidad);
-                    array_push($dom3, calculateDim($dim[12], $cantidad));
+                <?php echo setColorDimension($dimensions[12], $cantidad);
+                    array_push($dom3, calculateDim($dimensions[12], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Demandas de carga mental</td>
-                <?php echo setColorDimension($dim[13], $cantidad);
-                    array_push($dom3, calculateDim($dim[13], $cantidad));
+                <?php echo setColorDimension($dimensions[13], $cantidad);
+                    array_push($dom3, calculateDim($dimensions[13], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Demandas de la jornada de trabajo</td>
-                <?php echo setColorDimension($dim[14], $cantidad);
-                    array_push($dom3, calculateDim($dim[14], $cantidad));
+                <?php echo setColorDimension($dimensions[14], $cantidad);
+                    array_push($dom3, calculateDim($dimensions[14], $cantidad));
                 ?>
             </tr>
             <tr>
@@ -163,14 +167,14 @@ $cont = 0;
             <tr>
                 <td rowspan="2">Recompensas</td>
                 <td>Recompensas derivadas de la pertenencia a la organización y del trabajo que se realiza</td>
-                <?php echo setColorDimension($dim[15], $cantidad);
-                    array_push($dom4, calculateDim($dim[15], $cantidad));
+                <?php echo setColorDimension($dimensions[15], $cantidad);
+                    array_push($dom4, calculateDim($dimensions[15], $cantidad));
                 ?>
             </tr>
             <tr>
                 <td>Reconocimiento y compensación</td>
-                <?php echo setColorDimension($dim[16], $cantidad);
-                    array_push($dom4, calculateDim($dim[16], $cantidad));
+                <?php echo setColorDimension($dimensions[16], $cantidad);
+                    array_push($dom4, calculateDim($dimensions[16], $cantidad));
                 ?>
             </tr>
             <tr>
