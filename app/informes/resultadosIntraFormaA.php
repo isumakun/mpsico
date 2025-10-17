@@ -28,6 +28,18 @@ $stmt->execute();
 $aspirantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $cantidad = count($aspirantes);
 
+// Verificar si hay datos disponibles
+if ($cantidad == 0) {
+    // Solo mostrar mensaje si no está siendo llamado desde informeGeneral.php
+    if (!isset($tieneDatos)) {
+        echo '<div class="alert alert-info text-center">
+                <h4>No hay datos disponibles</h4>
+                <p>No se encontraron registros para los filtros seleccionados en la Forma A.</p>
+              </div>';
+    }
+    return;
+}
+
 $dom1 = array();
 $dom2 = array();
 $dom3 = array();

@@ -4,6 +4,56 @@
     require './funciones.php';
     error_reporting(0);
     $fichaTecnica = getFichaTecnica($_POST['empresa'], $_POST['area']);
+
+    // Funciones para verificar la existencia de datos
+    function verificarDatosFormaA($empresa, $area) {
+        $pdo = conectar();
+        $sql = "SELECT COUNT(DISTINCT ft.idFichaTrabajo)
+                FROM fichatrabajo AS ft
+                INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+                INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante
+                INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+                INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+                WHERE c.Numero = 3";
+
+        if ($empresa != 'all') {
+            $sql .= " AND e.idEmpresa IN (".implode(',', $empresa).")";
+        }
+        if ($area != 'all') {
+            $sql .= " AND ar.idArea = ".$area;
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+
+    function verificarDatosFormaB($empresa, $area) {
+        $pdo = conectar();
+        $sql = "SELECT COUNT(DISTINCT ft.idFichaTrabajo)
+                FROM fichatrabajo AS ft
+                INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+                INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante
+                INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+                INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+                WHERE c.Numero = 4";
+
+        if ($empresa != 'all') {
+            $sql .= " AND e.idEmpresa IN (".implode(',', $empresa).")";
+        }
+        if ($area != 'all') {
+            $sql .= " AND ar.idArea = ".$area;
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // Verificar si hay datos disponibles para FormaA y FormaB
+    $tieneFormaA = verificarDatosFormaA($_POST['empresa'], $_POST['area']);
+    $tieneFormaB = verificarDatosFormaB($_POST['empresa'], $_POST['area']);
+    $tieneDatos = $tieneFormaA || $tieneFormaB;
     ?>  
     <link href="css/cuestionario.css" rel="stylesheet" media="all">
     <link href="css/informe_general.css" rel="stylesheet" media="all">
@@ -68,13 +118,25 @@
                         <div class="col-sm-12 col-xs-12 form-group">
                             <div class="col-sm-12">
                                 <center>
-                                    <div id="dist_intralaboral_a"></div>
-                                    <?php require './informes/resultadosIntraFormaA.php'; ?>
-                                    <?php require './informes/porcentajesIntaFormaA.php'; ?>
-                                    <br><br>
-                                    <div id="dist_intralaboral_b"></div>
-                                    <?php require './informes/resultadosIntraFormaB.php'; ?>
-                                    <?php require './informes/porcentajesIntaFormaB.php'; ?>
+                                    <?php if (!$tieneDatos): ?>
+                                        <div class="alert alert-info text-center" style="margin: 50px 0;">
+                                            <h4>No hay datos disponibles</h4>
+                                            <p>No se encontraron registros para los filtros seleccionados en las evaluaciones intralaborales.</p>
+                                        </div>
+                                    <?php else: ?>
+                                        <?php if ($tieneFormaA): ?>
+                                            <div id="dist_intralaboral_a"></div>
+                                            <?php require './informes/resultadosIntraFormaA.php'; ?>
+                                            <?php require './informes/porcentajesIntaFormaA.php'; ?>
+                                            <br><br>
+                                        <?php endif; ?>
+                                        
+                                        <?php if ($tieneFormaB): ?>
+                                            <div id="dist_intralaboral_b"></div>
+                                            <?php require './informes/resultadosIntraFormaB.php'; ?>
+                                            <?php require './informes/porcentajesIntaFormaB.php'; ?>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                 </center>
                             </div>
                         </div>
@@ -718,6 +780,7 @@
     });
 
     $(function () {
+        <?php if ($tieneFormaA): ?>
         var nMA = <?php echo getByIntralaboral('Riesgo muy alto', $_POST['empresa'], $_POST['area'], "A") ?>;
         var nA = <?php echo getByIntralaboral('Riesgo alto', $_POST['empresa'], $_POST['area'], "A") ?>;
         var nM = <?php echo getByIntralaboral('Riesgo medio', $_POST['empresa'], $_POST['area'], "A") ?>;
@@ -775,9 +838,11 @@
                 }]
             }]
         });
+        <?php endif; ?>
     });
 
     $(function () {
+        <?php if ($tieneFormaB): ?>
         var nMA = <?php echo getByIntralaboral('Riesgo muy alto', $_POST['empresa'], $_POST['area'], "B") ?>;
         var nA = <?php echo getByIntralaboral('Riesgo alto', $_POST['empresa'], $_POST['area'], "B") ?>;
         var nM = <?php echo getByIntralaboral('Riesgo medio', $_POST['empresa'], $_POST['area'], "B") ?>;
@@ -835,6 +900,7 @@
                 }]
             }]
         });
+        <?php endif; ?>
     });
 
     $(function () {

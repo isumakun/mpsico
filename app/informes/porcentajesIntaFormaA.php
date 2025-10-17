@@ -1,3 +1,38 @@
+<?php
+// Verificación inicial de datos para FormaA
+$pdo = conectar();
+$sql_check = "SELECT COUNT(DISTINCT ft.idFichaTrabajo)
+              FROM fichatrabajo AS ft
+              INNER JOIN aspirante AS a ON ft.Aspirante_idAspirante = a.idAspirante
+              INNER JOIN cuestionario AS c ON c.Aspirante_idAspirante = a.idAspirante
+              INNER JOIN empresa AS e ON a.Empresa_idEmpresa = e.idEmpresa
+              INNER JOIN area AS ar ON ar.idArea = ft.Area_idArea
+              WHERE c.Numero = 3";
+
+if ($_POST['empresa'] != 'all') {
+    $sql_check .= " AND e.idEmpresa IN (".implode(',', $_POST['empresa']).")";
+}
+
+if ($_POST['area'] != 'all') {
+    $sql_check .= " AND ar.idArea = ".$_POST['area'];
+}
+
+$stmt_check = $pdo->prepare($sql_check);
+$stmt_check->execute();
+$count_aspirantes = $stmt_check->fetchColumn();
+
+if ($count_aspirantes == 0) {
+    // Solo mostrar mensaje si no está siendo llamado desde informeGeneral.php
+    if (!isset($tieneDatos)) {
+        echo '<div class="alert alert-info text-center">
+                <h4>No hay datos disponibles</h4>
+                <p>No se encontraron registros para los filtros seleccionados en la Forma A.</p>
+              </div>';
+    }
+    return;
+}
+?>
+
 <table class="table table-bordered">
     <tr>
         <td colspan="6"><b><center>RESULTADO DE LAS CONDICIONES INTRALABORALES EVALUADAS</center></b></td>
@@ -219,6 +254,12 @@ function get_numero_a($pos, $baremo) {
     $aspirantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $cantidad = count($aspirantes);
+    
+    // Si no hay datos, retornar mensaje
+    if ($cantidad == 0) {
+        return "0%";
+    }
+    
     $count = 0;
 
     // Procesar cada aspirante
@@ -245,4 +286,9 @@ function get_numero_a($pos, $baremo) {
     $porcentaje = ($count * 100) / $cantidad;
     $result = round($porcentaje, 0) . "%";
     return $result;
+}
+
+// Función alias para compatibilidad
+function getNumeroA($pos, $baremo) {
+    return get_numero_a($pos, $baremo);
 }
