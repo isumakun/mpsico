@@ -33,21 +33,24 @@ if ($count_aspirantes == 0) {
 }
 ?>
 
-<table class="table table-bordered">
-    <tr>
-        <td colspan="6"><b><center>RESULTADO DE LAS CONDICIONES INTRALABORALES EVALUADAS</center></b></td>
-    </tr>
-    <tr>
-        <td rowspan="2"><b><center>RESULTADO DE LAS CONDICIONES INTRALABORALES EVALUADAS</center></b></td>
-        <td colspan="6"><b><center>PORCENTAJE DE TRABAJADORES</center></b></td>
-    </tr>
-    <tr>
-        <td><b>SIN<br>RIESGO</b></td>
-        <td><b>RIESGO<br>BAJO</b></td>
-        <td><b>RIESGO<br>MEDIO</b></td>
-        <td><b>RIESGO<br>ALTO</b></td>
-        <td><b>RIESGO<br>MUY ALTO</b></td>
-    </tr>
+<table class="table table-bordered table-striped table-hover">
+    <thead class="bg-danger">
+        <tr>
+            <th colspan="6" class="text-center"><strong>RESULTADO DE LAS CONDICIONES INTRALABORALES EVALUADAS - FORMA B</strong></th>
+        </tr>
+        <tr>
+            <th rowspan="2" class="text-center align-middle"><strong>RESULTADO DE LAS CONDICIONES INTRALABORALES EVALUADAS</strong></th>
+            <th colspan="5" class="text-center"><strong>PORCENTAJE DE TRABAJADORES</strong></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="bg-info">
+            <th class="text-center"><strong>SIN<br>RIESGO</strong></th>
+            <th class="text-center"><strong>RIESGO<br>BAJO</strong></th>
+            <th class="text-center"><strong>RIESGO<br>MEDIO</strong></th>
+            <th class="text-center"><strong>RIESGO<br>ALTO</strong></th>
+            <th class="text-center"><strong>RIESGO<br>MUY ALTO</strong></th>
+        </tr>
     <tr><td colspan="6"><b>LIDERAZGO Y RELACIONES SOCIALES EN EL TRABAJO</b></td></tr>
     <tr>
         <td>Características del liderazgo</td>
@@ -178,8 +181,9 @@ if ($count_aspirantes == 0) {
         <td><?= get_numero_b(15, "Riesgo bajo"); ?></td>
         <td><?= get_numero_b(15, "Riesgo medio"); ?></td>
         <td><?= get_numero_b(15, "Riesgo alto"); ?></td>
-        <td><?= get_numero_b(15, "Riesgo muy alto"); ?></td>
-    </tr>
+        <td class="text-center"><?= get_numero_b(15, "Riesgo muy alto"); ?></td>
+        </tr>
+    </tbody>
 </table>
 
 <?php

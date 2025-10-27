@@ -58,142 +58,398 @@
     <link href="css/cuestionario.css" rel="stylesheet" media="all">
     <link href="css/informe_general.css" rel="stylesheet" media="all">
 
+    <style>
+        /* Estilos personalizados para el informe */
+        .informe-section {
+            margin-bottom: 30px;
+            background: #fff;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        .informe-header {
+            background: #3c8dbc;
+            color: #fff;
+            padding: 15px 20px;
+            margin: -15px -15px 20px -15px;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .informe-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .table-responsive {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            line-height: 1.42857143;
+            vertical-align: top;
+        }
+
+        .table > thead > tr > th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table-striped > tbody > tr:nth-child(odd) > td,
+        .table-striped > tbody > tr:nth-child(odd) > th {
+            background-color: #f9f9f9;
+        }
+
+        /* Loading spinner */
+        .chart-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 480px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3c8dbc;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-container {
+            min-height: 480px;
+            margin: 20px 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .no-data-message {
+            background: #d9edf7;
+            border: 1px solid #bce8f1;
+            color: #31708f;
+            border-radius: 4px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .no-data-message h4 {
+            color: #31708f;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive para gráficas */
+        @media (max-width: 768px) {
+            .chart-container {
+                min-height: 300px;
+            }
+            
+            .chart-loading {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chart-container {
+                min-height: 250px;
+            }
+            
+            .chart-loading {
+                height: 250px;
+            }
+        }
+    </style>
+
     <div class="box box-primary">
         <div class="box-header">
             <a href="informeOpciones.php" class="btn btn-default">Volver</a>
         </div>
         <div class="box-body">
             <section class="">
-                    <div class="row">
-                        <div class="col-xs-12 text-center">
-                            <center><h3><b>RESULTADOS SOCIODEMOGRAFICOS</b>
-                            </h3></center>
-                            <div class="title-line-4 blue less-margin align-center"></div>
-                        </div>
-
-                        <div class="col-sm-12 col-xs-12">
-                            <table class="table" style="width: 100%">
-                                <thead>
-                                    <th></th>
-                                    <th>Aspirantes</th>
-                                </thead>
-                                <tr>
-                                    <td>
-                                        
-                                    </td>
-                                    <td>
-                                        <?= count($fichaTecnica) ?>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <hr>
-                        <div class="col-sm-12 col-xs-12">
-                            <div class="col-sm-12">
-                                <center>
-                                    <div class="graphic" id="dist_genero"></div>
-                                    <div class="graphic" id="dist_estado"></div>
-                                    <div class="graphic" id="dist_estudios"></div>
-                                    <div class="graphic" id="dist_estrato"></div>
-                                </center>
+                <!-- SECCIÓN SOCIODEMOGRÁFICA -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="box box-info informe-section">
+                            <div class="box-header informe-header">
+                                <h3 class="box-title">
+                                    <i class="fa fa-users"></i> RESULTADOS SOCIODEMOGRÁFICOS
+                                </h3>
                             </div>
-
-                            <div class="col-sm-12">
-                                <center>
-                                    <div class="graphic" id="dist_vivienda"></div>
-                                    <div class="graphic" id="dist_antiguedad"></div>
-                                    <div class="graphic" id="dist_tipocargo"></div>
-                                </center>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Descripción</th>
+                                                        <th class="text-center">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Total de Aspirantes</strong></td>
+                                                        <td class="text-center">
+                                                            <span class="badge bg-blue"><?= count($fichaTecnica) ?></span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="chart-loading" id="loading_genero">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_genero" style="display: none;"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="chart-loading" id="loading_estado">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_estado" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="chart-loading" id="loading_estudios">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_estudios" style="display: none;"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="chart-loading" id="loading_estrato">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_estrato" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="chart-loading" id="loading_vivienda">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_vivienda" style="display: none;"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="chart-loading" id="loading_antiguedad">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_antiguedad" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center">
+                                                <div class="chart-loading" id="loading_tipocargo">
+                                                    <div class="spinner"></div>
+                                                    <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                </div>
+                                                <div class="chart-container" id="dist_tipocargo" style="display: none;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="row inter3" style="page-break-before: always">
-                        <div class="col-xs-12 text-center" style="margin-top: 20px">
-                            <center><h3><b>RESULTADOS RIESGO PSICOSOCIAL INTRALABORAL</b>
-                            </h3></center>
-                            <div class="title-line-4 blue less-margin align-center"></div>
-                        </div>
-
-                        <div class="col-sm-12 col-xs-12 form-group">
-                            <div class="col-sm-12">
-                                <center>
-                                    <?php if (!$tieneDatos): ?>
-                                        <div class="alert alert-info text-center" style="margin: 50px 0;">
-                                            <h4>No hay datos disponibles</h4>
-                                            <p>No se encontraron registros para los filtros seleccionados en las evaluaciones intralaborales.</p>
-                                        </div>
-                                    <?php else: ?>
+                <!-- SECCIÓN INTRALABORAL -->
+                <div class="row" style="page-break-before: always">
+                    <div class="col-xs-12">
+                        <div class="box box-success informe-section">
+                            <div class="box-header informe-header" style="background: #00a65a;">
+                                <h3 class="box-title">
+                                    <i class="fa fa-building"></i> RESULTADOS RIESGO PSICOSOCIAL INTRALABORAL
+                                </h3>
+                            </div>
+                            <div class="box-body">
+                                <?php if (!$tieneDatos): ?>
+                                    <div class="no-data-message">
+                                        <h4><i class="fa fa-info-circle"></i> No hay datos disponibles</h4>
+                                        <p>No se encontraron registros para los filtros seleccionados en las evaluaciones intralaborales.</p>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="row">
                                         <?php if ($tieneFormaA): ?>
-                                            <div id="dist_intralaboral_a"></div>
-                                            <?php require './informes/resultadosIntraFormaA.php'; ?>
-                                            <?php require './informes/porcentajesIntaFormaA.php'; ?>
-                                            <br><br>
+                                        <div class="col-xs-12">
+                                            <div class="box box-solid">
+                                                <div class="box-header" style="background: #3c8dbc; color: white;">
+                                                    <h4 class="box-title">
+                                                        <i class="fa fa-pie-chart"></i> FORMA A - Cuestionario Intralaboral
+                                                    </h4>
+                                                </div>
+                                                <div class="box-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="chart-loading" id="loading_intralaboral_a">
+                                                                <div class="spinner"></div>
+                                                                <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                            </div>
+                                                            <div class="chart-container" id="dist_intralaboral_a" style="display: none;"></div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="table-responsive">
+                                                                <?php require './informes/resultadosIntraFormaA.php'; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <div class="table-responsive">
+                                                                <?php require './informes/porcentajesIntaFormaA.php'; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <?php endif; ?>
                                         
                                         <?php if ($tieneFormaB): ?>
-                                            <div id="dist_intralaboral_b"></div>
-                                            <?php require './informes/resultadosIntraFormaB.php'; ?>
-                                            <?php require './informes/porcentajesIntaFormaB.php'; ?>
+                                        <div class="col-xs-12">
+                                            <div class="box box-solid">
+                                                <div class="box-header" style="background: #dd4b39; color: white;">
+                                                    <h4 class="box-title">
+                                                        <i class="fa fa-pie-chart"></i> FORMA B - Cuestionario Intralaboral
+                                                    </h4>
+                                                </div>
+                                                <div class="box-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="chart-loading" id="loading_intralaboral_b">
+                                                                <div class="spinner"></div>
+                                                                <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                                            </div>
+                                                            <div class="chart-container" id="dist_intralaboral_b" style="display: none;"></div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="table-responsive">
+                                                                <?php require './informes/resultadosIntraFormaB.php'; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <div class="table-responsive">
+                                                                <?php require './informes/porcentajesIntaFormaB.php'; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <?php endif; ?>
-                                    <?php endif; ?>
-                                </center>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="row inter3" style="page-break-before: always">
-                        <div class="col-xs-12 text-center" style="margin-top: 20px">
-                            <center><h3><b>RESULTADOS RIESGO PSICOSOCIAL EXTRALABORAL</b>
-                            </h3></center>
-                            <div class="title-line-4 blue less-margin align-center"></div>
-                        </div>
-
-                        <div class="col-sm-12 col-xs-12 form-group">
-                            <div class="col-sm-12">
-                                <center>
-                                    <div class="graphic" id="dist_extralaboral"></div>
-                                </center>
+                <!-- SECCIÓN EXTRALABORAL -->
+                <div class="row" style="page-break-before: always">
+                    <div class="col-xs-12">
+                        <div class="box box-warning informe-section">
+                            <div class="box-header informe-header" style="background: #f39c12;">
+                                <h3 class="box-title">
+                                    <i class="fa fa-home"></i> RESULTADOS RIESGO PSICOSOCIAL EXTRALABORAL
+                                </h3>
                             </div>
-
-                            <div class="col-sm-12">
-                                <?php
-                                require './informes/resultadosExtralaboral.php';
-                                ?>
-                            </div>
-
-                            <div class="col-sm-12">
-                                <?php
-                                require './informes/porcentajesExtra.php';
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row inter3" style="page-break-before: always">
-                        <div class="col-xs-12 text-center" style="margin-top: 20px">
-                            <center><h3><b>RESULTADOS DE ÉSTRES</b>
-                            </h3></center>
-                            <div class="title-line-4 blue less-margin align-center"></div>
-                        </div>
-
-                        <div class="col-sm-12 col-xs-12 form-group">
-                            <div class="col-sm-12">
-                                <center>
-                                    <div class="graphic" id="dist_estres"></div>
-                                </center>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="chart-loading" id="loading_extralaboral">
+                                            <div class="spinner"></div>
+                                            <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                        </div>
+                                        <div class="chart-container" id="dist_extralaboral" style="display: none;"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="table-responsive">
+                                            <?php require './informes/resultadosExtralaboral.php'; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="table-responsive">
+                                            <?php require './informes/porcentajesExtra.php'; ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
-            </div>
-        </section>
+                </div>
 
-        <?php require './footer.php'; ?>
-        <!-- end site wraper --> 
-        <script type="text/javascript">
+                <!-- SECCIÓN ESTRÉS -->
+                <div class="row" style="page-break-before: always">
+                    <div class="col-xs-12">
+                        <div class="box box-danger informe-section">
+                            <div class="box-header informe-header" style="background: #dd4b39;">
+                                <h3 class="box-title">
+                                    <i class="fa fa-exclamation-triangle"></i> RESULTADOS DE ESTRÉS
+                                </h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-xs-12 text-center">
+                                        <div class="chart-loading" id="loading_estres">
+                                            <div class="spinner"></div>
+                                            <span style="margin-left: 10px;">Cargando gráfica...</span>
+                                        </div>
+                                        <div class="chart-container" id="dist_estres" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
 
-            $(function () {
+    <?php require './footer.php'; ?>
+    <!-- end site wraper --> 
+    <script type="text/javascript">
+        // Función para mostrar gráfica después del loading
+        function showChart(chartId, loadingId) {
+            setTimeout(function() {
+                $('#' + loadingId).hide();
+                $('#' + chartId).show();
+            }, 500);
+        }
+
+        $(function () {
                 <?php 
 
                 $nHombres = 0;
@@ -213,14 +469,27 @@
                 $('#dist_genero').highcharts({
                     chart: {
                         plotBackgroundColor: null,
-                        width: 800,
-                        height: 480,
                         type: 'pie'
+                    },
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                maxWidth: 500
+                            },
+                            chartOptions: {
+                                legend: {
+                                    layout: 'horizontal',
+                                    align: 'center',
+                                    verticalAlign: 'bottom'
+                                }
+                            }
+                        }]
                     },
                     title: {
                         text: 'Distribucion por Genero'
                     },
                     tooltip: {
+                        useHTML: true,
                         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                     },
                     plotOptions: {
@@ -229,6 +498,7 @@
                             cursor: 'pointer',
                             dataLabels: {
                                 enabled: true,
+                                useHTML: true,
                                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                                 style: {
                                     color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -248,6 +518,9 @@
                         }]
                     }]
                 });
+                
+                // Mostrar gráfica después del loading
+                showChart('dist_genero', 'loading_genero');
             });
 
 
@@ -292,14 +565,27 @@
                $('#dist_estado').highcharts({
                 chart: {
                     plotBackgroundColor: null,
-                    width: 800,
-                    height: 480,
                     type: 'pie'
+                },
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
                 },
                 title: {
                     text: 'Distribución por estado civil'
                 },
                 tooltip: {
+                    useHTML: true,
                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                 },
                 plotOptions: {
@@ -308,6 +594,7 @@
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
+                            useHTML: true,
                             format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                             style: {
                                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -342,6 +629,9 @@
                     }]
                 }]
             });
+            
+            // Mostrar gráfica después del loading
+            showChart('dist_estado', 'loading_estado');
            });
 
             $(function () {
@@ -404,14 +694,27 @@
                $('#dist_estudios').highcharts({
                 chart: {
                     plotBackgroundColor: null,
-                    width: 800,
-                    height: 480,
                     type: 'pie'
+                },
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
                 },
                 title: {
                     text: 'Distribución por escolaridad'
                 },
                 tooltip: {
+                    useHTML: true,
                     pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                 },
                 plotOptions: {
@@ -420,6 +723,7 @@
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
+                            useHTML: true,
                             format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                             style: {
                                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -469,6 +773,9 @@
                     }]
                 }]
             });
+            
+            // Mostrar gráfica después del loading
+            showChart('dist_estudios', 'loading_estudios');
            });
 
     $(function () {
@@ -514,14 +821,27 @@
         $('#dist_estrato').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Distribución por estrato'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -530,6 +850,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -567,6 +888,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_estrato', 'loading_estrato');
     });
 
 
@@ -595,14 +919,27 @@
         $('#dist_vivienda').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Distribución por vivienda'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -611,6 +948,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -633,6 +971,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_vivienda', 'loading_vivienda');
     });
 
     $(function () {
@@ -664,14 +1005,27 @@
         $('#dist_antiguedad').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Distribución por antiguedad'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -680,6 +1034,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -705,6 +1060,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_antiguedad', 'loading_antiguedad');
     });
 
     $(function () {
@@ -736,14 +1094,27 @@
         $('#dist_tipocargo').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Distribución por tipo de cargo'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -752,6 +1123,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -777,6 +1149,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_tipocargo', 'loading_tipocargo');
     });
 
     $(function () {
@@ -791,14 +1166,27 @@
         $('#dist_intralaboral_a').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Puntaje total cuestionario de Riesgo Psicosocial Intralaboral FORMA A'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -807,6 +1195,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -833,11 +1222,14 @@
                     name: 'Riesgo Muy Bajo ('+nMB+')',
                     y: nMB
                 }, {
-                    name: 'Sin riesgo o riesgo despreciable ('+NR+')',
+                    name: 'Sin riesgo o <br> riesgo despreciable ('+NR+')',
                     y: NR
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_intralaboral_a', 'loading_intralaboral_a');
         <?php endif; ?>
     });
 
@@ -853,14 +1245,27 @@
         $('#dist_intralaboral_b').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Puntaje total cuestionario de Riesgo Psicosocial Intralaboral FORMA B'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -869,6 +1274,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -900,6 +1306,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_intralaboral_b', 'loading_intralaboral_b');
         <?php endif; ?>
     });
 
@@ -914,14 +1323,27 @@
         $('#dist_extralaboral').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Puntaje total cuestionario de Riesgo Psicosocial Extralaboral'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -930,6 +1352,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -961,6 +1384,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_extralaboral', 'loading_extralaboral');
     });
 
     $(function () {
@@ -975,14 +1401,27 @@
         $('#dist_estres').highcharts({
             chart: {
                 plotBackgroundColor: null,
-                width: 800,
-                height: 480,
                 type: 'pie'
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
             },
             title: {
                 text: 'Puntaje total cuestionario de Evaluación para el Estrés'
             },
             tooltip: {
+                useHTML: true,
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
@@ -991,6 +1430,7 @@
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
+                        useHTML: true,
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -1022,6 +1462,9 @@
                 }]
             }]
         });
+        
+        // Mostrar gráfica después del loading
+        showChart('dist_estres', 'loading_estres');
     });
 
 </script>
